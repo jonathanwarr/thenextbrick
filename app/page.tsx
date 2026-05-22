@@ -1,65 +1,200 @@
-import Image from "next/image";
+import Navbar from "@/components/layout/Navbar";
+import Footer from "@/components/layout/Footer";
+import SearchBar from "@/components/ui/SearchBar";
+import BrickCard from "@/components/ui/BrickCard";
+import NewsletterForm from "@/components/ui/NewsletterForm";
+import Link from "next/link";
+import { listPublishedPosts } from "@/lib/posts/queries";
+import { formatShortDate } from "@/lib/posts/format";
 
-export default function Home() {
+export default async function HomePage() {
+  const recent = await listPublishedPosts({ limit: 3 });
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
+    <div className="h-screen flex flex-col overflow-hidden">
+      <Navbar />
+
+      <main className="flex-1 flex flex-col min-h-0">
+
+        {/* Hero */}
+        <section className="flex-1 flex flex-col items-center justify-center text-center px-6 pb-20">
+          {/* Editorial rule */}
+          <div
+            className="flex items-center gap-4 w-full max-w-[640px] mb-7"
+            style={{ animation: "fadeUp 0.5s ease both", animationDelay: "0ms" }}
+          >
+            <div className="h-px flex-1" style={{ backgroundColor: "var(--color-border)" }} />
+            <span
+              className="text-[9px] font-bold tracking-wider uppercase whitespace-nowrap"
+              style={{ color: "var(--color-text-muted)" }}
+            >
+              Foundations · Builds · Observations · Essays
+            </span>
+            <div className="h-px flex-1" style={{ backgroundColor: "var(--color-border)" }} />
+          </div>
+
+          {/* Headline */}
+          <h1
+            className="text-4xl md:text-5xl font-bold leading-none mb-2"
+            style={{
+              animation: "fadeUp 0.5s ease both",
+              animationDelay: "80ms",
+            }}
+          >
+            <span className="font-semibold" style={{ color: "var(--color-primary)" }}>Claude</span>{" "}
+            <span className="font-normal">for Professionals</span>
           </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+
+          {/* Subtitle */}
+          <p
+            className="text-xl mb-14 font-family-serif"
+            style={{
+              color: "var(--color-text-secondary)",
+              letterSpacing: "var(--tracking-subtitle)",
+              animation: "fadeUp 0.5s ease both",
+              animationDelay: "160ms",
+            }}
+          >
+            AI Enablement. One Brick at a Time.
           </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+
+          {/* Search */}
+          <div
+            className="w-full"
+            style={{
+              maxWidth: "640px",
+              animation: "fadeUp 0.5s ease both",
+              animationDelay: "240ms",
+            }}
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
+            <SearchBar size="hero" />
+          </div>
+        </section>
+
+        {/* Articles + newsletter */}
+        <section className="flex-1 w-full max-w-7xl mx-auto px-6 flex flex-col pt-5 pb-6 min-h-0">
+
+          {/* Section header */}
+          <div className="flex items-center gap-3 mb-4">
+            <span
+              className="text-[10px] font-bold uppercase tracking-[0.18em] shrink-0"
+              style={{ color: "var(--color-text-muted)" }}
+            >
+              Latest
+            </span>
+            <div className="h-px flex-1" style={{ backgroundColor: "var(--color-border)" }} />
+            <Link
+              href="/bricks"
+              className="text-xs font-semibold shrink-0 transition-opacity hover:opacity-70"
+              style={{ color: "var(--color-primary)" }}
+            >
+              Browse all →
+            </Link>
+          </div>
+
+          {/* Article grid: featured (left, row-span-2) + 2 standard stacked (right) */}
+          {recent.length > 0 ? (
+            <div
+              className="grid gap-3"
+              style={{ gridTemplateColumns: "2fr 1fr", gridTemplateRows: "1fr 1fr", flex: "1 1 0", minHeight: 0 }}
+            >
+              {recent[0] && (
+                <BrickCard
+                  slug={recent[0].slug}
+                  title={recent[0].title}
+                  date={formatShortDate(recent[0].publishedAt)}
+                  category={recent[0].category}
+                  tags={recent[0].tags}
+                  excerpt={recent[0].dek ?? undefined}
+                  featured
+                  className="row-span-2"
+                />
+              )}
+              {recent[1] && (
+                <BrickCard
+                  slug={recent[1].slug}
+                  title={recent[1].title}
+                  date={formatShortDate(recent[1].publishedAt)}
+                  category={recent[1].category}
+                  tags={recent[1].tags}
+                />
+              )}
+              {recent[2] && (
+                <BrickCard
+                  slug={recent[2].slug}
+                  title={recent[2].title}
+                  date={formatShortDate(recent[2].publishedAt)}
+                  category={recent[2].category}
+                  tags={recent[2].tags}
+                />
+              )}
+            </div>
+          ) : (
+            <div
+              className="rounded-xl p-8 text-center"
+              style={{
+                backgroundColor: "var(--color-surface)",
+                border: "1px dashed var(--color-border)",
+                flex: "1 1 0",
+                minHeight: 0,
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <p className="font-medium mb-1">No articles yet.</p>
+              <p className="text-sm" style={{ color: "var(--color-text-secondary)" }}>
+                The first brick lands soon.
+              </p>
+            </div>
+          )}
+
+          {/* Newsletter */}
+          <div className="mt-4 shrink-0">
+            <div
+              className="flex items-center justify-between gap-10 rounded-xl px-8 py-4"
+              style={{
+                backgroundColor: "var(--color-dark)",
+                backgroundImage:
+                  "radial-gradient(ellipse at 10% 50%, rgba(217,172,140,0.10) 0%, transparent 55%)",
+              }}
+            >
+              {/* Mini brick icon */}
+              <div className="hidden md:flex flex-col gap-[3px] shrink-0 w-10">
+                <div className="flex gap-[3px] h-3">
+                  <div className="flex-[2] rounded-[2px]" style={{ backgroundColor: "var(--color-primary)" }} />
+                  <div className="flex-[1] rounded-[2px]" style={{ backgroundColor: "var(--color-surface)" }} />
+                </div>
+                <div className="flex gap-[3px] h-3">
+                  <div className="flex-[1] rounded-[2px]" style={{ backgroundColor: "var(--color-surface)" }} />
+                  <div className="flex-[2] rounded-[2px]" style={{ backgroundColor: "var(--color-primary)" }} />
+                </div>
+              </div>
+
+              <div className="shrink-0">
+                <h3
+                  className="text-base font-bold leading-tight"
+                  style={{ color: "var(--color-bg)" }}
+                >
+                  Get Bricks By Email
+                </h3>
+                <p className="text-sm font-medium mt-0.5" style={{ color: "var(--color-secondary)" }}>
+                  Quick reads to help you master{" "}
+                  <span style={{ color: "var(--color-primary)" }}>Claude.</span>
+                </p>
+              </div>
+
+              <div className="flex-1 max-w-lg">
+                <NewsletterForm layout="horizontal" />
+              </div>
+            </div>
+          </div>
+
+        </section>
       </main>
+
+      <Footer />
     </div>
   );
 }
