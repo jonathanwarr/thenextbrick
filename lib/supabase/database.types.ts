@@ -40,6 +40,7 @@ export type Database = {
           created_at?: string;
           updated_at?: string;
         };
+        Relationships: [];
       };
       posts: {
         Row: {
@@ -88,6 +89,7 @@ export type Database = {
           created_at?: string;
           updated_at?: string;
         };
+        Relationships: [];
       };
       tags: {
         Row: {
@@ -108,6 +110,7 @@ export type Database = {
           name?: string;
           created_at?: string;
         };
+        Relationships: [];
       };
       post_tags: {
         Row: {
@@ -122,6 +125,22 @@ export type Database = {
           post_id?: string;
           tag_id?: string;
         };
+        Relationships: [
+          {
+            foreignKeyName: "post_tags_post_id_fkey";
+            columns: ["post_id"];
+            isOneToOne: false;
+            referencedRelation: "posts";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "post_tags_tag_id_fkey";
+            columns: ["tag_id"];
+            isOneToOne: false;
+            referencedRelation: "tags";
+            referencedColumns: ["id"];
+          },
+        ];
       };
       subscribers: {
         Row: {
@@ -151,6 +170,7 @@ export type Database = {
           created_at?: string;
           updated_at?: string;
         };
+        Relationships: [];
       };
     };
     Views: Record<string, never>;
