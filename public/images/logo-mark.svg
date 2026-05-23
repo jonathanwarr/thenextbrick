@@ -1,0 +1,9 @@
+<svg width="500" height="500" viewBox="0 0 500 500" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="logo-mark">
+<rect width="500" height="500" fill="white"/>
+<path id="Rectangle 882" d="M0 20H176C178.209 20 180 21.7909 180 24V236C180 238.209 178.209 240 176 240H0V20Z" fill="#D9AC8C"/>
+<path id="Rectangle 883" d="M200 24C200 21.7909 201.791 20 204 20H500V240H204C201.791 240 200 238.209 200 236V24Z" fill="#CFBDAF"/>
+<path id="Rectangle 884" d="M0 260H396C398.209 260 400 261.791 400 264V476C400 478.209 398.209 480 396 480H0V260Z" fill="#CFBDAF"/>
+<path id="Rectangle 885" d="M420 264C420 261.791 421.791 260 424 260H500V480H424C421.791 480 420 478.209 420 476V264Z" fill="#D9AC8C"/>
+</g>
+</svg>
