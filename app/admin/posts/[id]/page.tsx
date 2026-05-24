@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import PostForm from "@/components/admin/PostForm";
 import { createServiceClient } from "@/lib/supabase/server";
+import { loadTagPickerData } from "@/lib/admin/tags";
 
 type EditPostParams = Promise<{ id: string }>;
 type EditPostSearchParams = Promise<{ saved?: string; error?: string }>;
@@ -16,22 +17,26 @@ export default async function EditPostPage({
   const { saved, error } = await searchParams;
 
   const supabase = createServiceClient();
-  const { data: post } = await supabase
-    .from("posts")
-    .select(`
-      id,
-      slug,
-      title,
-      dek,
-      body_md,
-      cover_variant,
-      status,
-      featured,
-      read_time_min,
-      post_tags ( tag:tags ( slug ) )
-    `)
-    .eq("id", id)
-    .maybeSingle();
+  const [{ data: post }, { groups, tags: availableTags }] = await Promise.all([
+    supabase
+      .from("posts")
+      .select(`
+        id,
+        slug,
+        title,
+        dek,
+        body_md,
+        cover_variant,
+        status,
+        featured,
+        read_time_min,
+        published_at,
+        post_tags ( tag:tags ( slug ) )
+      `)
+      .eq("id", id)
+      .maybeSingle(),
+    loadTagPickerData(),
+  ]);
 
   if (!post) notFound();
 
@@ -43,6 +48,8 @@ export default async function EditPostPage({
     <PostForm
       saved={saved === "1"}
       error={error}
+      availableGroups={groups}
+      availableTags={availableTags}
       values={{
         id: post.id,
         title: post.title,
@@ -54,6 +61,7 @@ export default async function EditPostPage({
         featured: post.featured,
         read_time_min: post.read_time_min,
         tags,
+        published_at: post.published_at,
       }}
     />
   );

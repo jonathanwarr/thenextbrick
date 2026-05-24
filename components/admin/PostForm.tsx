@@ -1,5 +1,10 @@
 import Link from "next/link";
 import { savePost, deletePost } from "@/app/admin/posts/actions";
+import TagPicker, {
+  type AvailableGroup,
+  type AvailableTag,
+} from "./TagPicker";
+import PublishedAtInput from "./PublishedAtInput";
 
 export type PostFormValues = {
   id?: string;
@@ -12,14 +17,19 @@ export type PostFormValues = {
   featured: boolean;
   read_time_min: number | null;
   tags: string[];
+  published_at: string | null;
 };
 
 export default function PostForm({
   values,
+  availableGroups,
+  availableTags,
   saved,
   error,
 }: {
   values: PostFormValues;
+  availableGroups: AvailableGroup[];
+  availableTags: AvailableTag[];
   saved?: boolean;
   error?: string;
 }) {
@@ -121,6 +131,13 @@ export default function PostForm({
           </Field>
         </div>
 
+        <Field
+          label="Publish date"
+          hint="Used when status is Scheduled or Published. Leave empty for drafts; defaults to now when publishing immediately."
+        >
+          <PublishedAtInput defaultValueIso={values.published_at} />
+        </Field>
+
         <Field label="Dek" hint="Short subheading shown on cards and the article page.">
           <input
             type="text"
@@ -142,16 +159,15 @@ export default function PostForm({
           />
         </Field>
 
-        <div className="grid grid-cols-3 gap-4">
-          <Field label="Tags" hint="Comma-separated slugs (e.g. prompting, agents).">
-            <input
-              type="text"
-              name="tags"
-              defaultValue={values.tags.join(", ")}
-              className="w-full px-4 py-2.5 rounded-lg outline-none"
-              style={fieldStyle}
-            />
-          </Field>
+        <Field label="Tags" hint="Click a group to browse. Click a tag to add or remove it.">
+          <TagPicker
+            groups={availableGroups}
+            tags={availableTags}
+            initialSelected={values.tags}
+          />
+        </Field>
+
+        <div className="grid grid-cols-2 gap-4">
           <Field label="Cover variant" hint="Optional.">
             <input
               type="text"

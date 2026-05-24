@@ -28,18 +28,20 @@ async function requireAdmin() {
   return { supabase: createServiceClient(), userId: user.id };
 }
 
+/**
+ * Resolves submitted tag slugs against existing tags and links them to the
+ * post. Unknown slugs are silently dropped — the UI restricts authors to
+ * curated tags, and reaching this code path with an unknown slug indicates
+ * either a bug or tampering. Failing the whole save would be hostile; the
+ * `tags` table can no longer grow via post saves (migration-only).
+ */
 async function syncTags(
   supabase: ReturnType<typeof createServiceClient>,
   postId: string,
-  tagSlugsCsv: string,
+  tagSlugs: string[],
 ) {
   const slugs = Array.from(
-    new Set(
-      tagSlugsCsv
-        .split(",")
-        .map((s) => slugify(s))
-        .filter(Boolean),
-    ),
+    new Set(tagSlugs.map((s) => s.trim()).filter(Boolean)),
   );
 
   await supabase.from("post_tags").delete().eq("post_id", postId);
@@ -47,19 +49,8 @@ async function syncTags(
 
   const { data: existing } = await supabase
     .from("tags")
-    .select("id, slug")
+    .select("id")
     .in("slug", slugs);
-
-  const existingSlugs = new Set((existing ?? []).map((t) => t.slug));
-  const newSlugs = slugs.filter((s) => !existingSlugs.has(s));
-
-  if (newSlugs.length > 0) {
-    const { data: inserted } = await supabase
-      .from("tags")
-      .insert(newSlugs.map((slug) => ({ slug, name: slug })))
-      .select("id, slug");
-    if (inserted) existing?.push(...inserted);
-  }
 
   const tagIds = (existing ?? []).map((t) => t.id);
   if (tagIds.length > 0) {
@@ -67,6 +58,48 @@ async function syncTags(
       .from("post_tags")
       .insert(tagIds.map((tag_id) => ({ post_id: postId, tag_id })));
   }
+}
+
+type PostStatus = "draft" | "scheduled" | "published";
+
+/**
+ * Resolves `published_at` based on status:
+ * - draft: always null (ignore submitted value)
+ * - scheduled: required + must be in the future
+ * - published: defaults to now() if missing; otherwise uses the submitted value
+ *
+ * Returns the ISO string to persist, or an error message if validation failed.
+ */
+function resolvePublishedAt(
+  status: PostStatus,
+  publishedAtRaw: string,
+): { ok: true; value: string | null } | { ok: false; error: string } {
+  if (status === "draft") return { ok: true, value: null };
+
+  if (status === "scheduled") {
+    if (!publishedAtRaw) {
+      return { ok: false, error: "Scheduled posts require a publish date." };
+    }
+    const date = new Date(publishedAtRaw);
+    if (isNaN(date.getTime())) {
+      return { ok: false, error: "Invalid publish date." };
+    }
+    if (date.getTime() <= Date.now()) {
+      return {
+        ok: false,
+        error: "Scheduled publish date must be in the future.",
+      };
+    }
+    return { ok: true, value: date.toISOString() };
+  }
+
+  // published
+  if (!publishedAtRaw) return { ok: true, value: new Date().toISOString() };
+  const date = new Date(publishedAtRaw);
+  if (isNaN(date.getTime())) {
+    return { ok: false, error: "Invalid publish date." };
+  }
+  return { ok: true, value: date.toISOString() };
 }
 
 export async function savePost(formData: FormData) {
@@ -78,16 +111,22 @@ export async function savePost(formData: FormData) {
   const dek = String(formData.get("dek") ?? "").trim() || null;
   const body_md = String(formData.get("body_md") ?? "");
   const cover_variant = String(formData.get("cover_variant") ?? "").trim() || null;
-  const status = String(formData.get("status") ?? "draft") as
-    | "draft"
-    | "scheduled"
-    | "published";
+  const status = String(formData.get("status") ?? "draft") as PostStatus;
   const featured = formData.get("featured") === "on";
-  const tagsCsv = String(formData.get("tags") ?? "");
+  const tagSlugs = formData.getAll("tags").map((v) => String(v));
   const readTimeRaw = String(formData.get("read_time_min") ?? "").trim();
   const read_time_min = readTimeRaw ? Number(readTimeRaw) : null;
+  const publishedAtRaw = String(formData.get("published_at") ?? "").trim();
 
-  if (!title) redirect("/admin/posts/new?error=missing-title");
+  const errorTarget = id ? `/admin/posts/${id}` : "/admin/posts/new";
+
+  if (!title) redirect(`${errorTarget}?error=missing-title`);
+
+  const publishedAtResult = resolvePublishedAt(status, publishedAtRaw);
+  if (!publishedAtResult.ok) {
+    redirect(`${errorTarget}?error=${encodeURIComponent(publishedAtResult.error)}`);
+  }
+  const published_at = publishedAtResult.value;
 
   if (id) {
     const { error } = await supabase
@@ -101,10 +140,11 @@ export async function savePost(formData: FormData) {
         status,
         featured,
         read_time_min,
+        published_at,
       })
       .eq("id", id);
     if (error) redirect(`/admin/posts/${id}?error=${encodeURIComponent(error.message)}`);
-    await syncTags(supabase, id, tagsCsv);
+    await syncTags(supabase, id, tagSlugs);
     revalidatePath("/admin/posts");
     revalidatePath(`/admin/posts/${id}`);
     revalidatePath(`/bricks/${slug}`);
@@ -123,12 +163,13 @@ export async function savePost(formData: FormData) {
         status,
         featured,
         read_time_min,
+        published_at,
         author_id: userId,
       })
       .select("id")
       .single();
     if (error || !data) redirect(`/admin/posts/new?error=${encodeURIComponent(error?.message ?? "unknown")}`);
-    await syncTags(supabase, data.id, tagsCsv);
+    await syncTags(supabase, data.id, tagSlugs);
     revalidatePath("/admin/posts");
     revalidatePath("/bricks");
     revalidatePath("/");

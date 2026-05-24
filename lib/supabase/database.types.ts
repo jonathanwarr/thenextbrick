@@ -97,17 +97,55 @@ export type Database = {
           slug: string;
           name: string;
           created_at: string;
+          group_id: string | null;
+          sort_order: number;
         };
         Insert: {
           id?: string;
           slug: string;
           name: string;
           created_at?: string;
+          group_id?: string | null;
+          sort_order?: number;
         };
         Update: {
           id?: string;
           slug?: string;
           name?: string;
+          created_at?: string;
+          group_id?: string | null;
+          sort_order?: number;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "tags_group_id_fkey";
+            columns: ["group_id"];
+            isOneToOne: false;
+            referencedRelation: "tag_groups";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      tag_groups: {
+        Row: {
+          id: string;
+          slug: string;
+          name: string;
+          sort_order: number;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          slug: string;
+          name: string;
+          sort_order?: number;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          slug?: string;
+          name?: string;
+          sort_order?: number;
           created_at?: string;
         };
         Relationships: [];
