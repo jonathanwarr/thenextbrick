@@ -26,8 +26,19 @@ export async function updateSubscriberStatus(formData: FormData) {
     | "confirmed"
     | "unsubscribed";
   if (!id || !status) return;
+
+  // Stamp the matching lifecycle timestamp when an admin changes status.
+  const now = new Date().toISOString();
+  const patch: {
+    status: typeof status;
+    confirmed_at?: string;
+    unsubscribed_at?: string;
+  } = { status };
+  if (status === "confirmed") patch.confirmed_at = now;
+  if (status === "unsubscribed") patch.unsubscribed_at = now;
+
   const service = createServiceClient();
-  await service.from("subscribers").update({ status }).eq("id", id);
+  await service.from("subscribers").update(patch).eq("id", id);
   revalidatePath("/admin/subscribers");
 }
 

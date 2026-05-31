@@ -1,6 +1,6 @@
 "use server";
 
-import { randomBytes } from "node:crypto";
+import { randomUUID } from "node:crypto";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { createServiceClient } from "@/lib/supabase/server";
@@ -22,7 +22,8 @@ export async function subscribe(formData: FormData) {
       : "");
 
   const supabase = createServiceClient();
-  const token = randomBytes(32).toString("hex");
+  // confirmation_token is a uuid column; generate a real UUID, not hex.
+  const token = randomUUID();
 
   const { data: existing } = await supabase
     .from("subscribers")
@@ -40,6 +41,8 @@ export async function subscribe(formData: FormData) {
       .update({
         status: "pending",
         confirmation_token: token,
+        confirmed_at: null,
+        unsubscribed_at: null,
         source,
       })
       .eq("id", existing.id);

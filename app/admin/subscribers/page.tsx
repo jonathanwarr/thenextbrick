@@ -7,7 +7,7 @@ export default async function AdminSubscribersPage() {
   const supabase = createServiceClient();
   const { data: subscribers } = await supabase
     .from("subscribers")
-    .select("id, email, status, source, created_at, updated_at")
+    .select("id, email, status, source, created_at")
     .order("created_at", { ascending: false });
 
   const counts = {

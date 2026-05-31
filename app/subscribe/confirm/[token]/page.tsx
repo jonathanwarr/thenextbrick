@@ -1,3 +1,4 @@
+import { randomUUID } from "node:crypto";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import { createServiceClient } from "@/lib/supabase/server";
@@ -12,9 +13,16 @@ export default async function ConfirmSubscriptionPage({
   const { token } = await params;
 
   const supabase = createServiceClient();
+  // The token column is NOT NULL, so we can't clear it. Rotate it to a fresh
+  // UUID instead — this makes the confirmation link single-use (re-clicking
+  // won't match) while keeping the column valid.
   const { data: subscriber, error } = await supabase
     .from("subscribers")
-    .update({ status: "confirmed", confirmation_token: null })
+    .update({
+      status: "confirmed",
+      confirmation_token: randomUUID(),
+      confirmed_at: new Date().toISOString(),
+    })
     .eq("confirmation_token", token)
     .select("email")
     .maybeSingle();
