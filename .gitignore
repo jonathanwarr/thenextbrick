@@ -44,6 +44,9 @@ yarn-error.log*
 # supabase
 supabase/.temp/
 
+# personal product briefs / working history — kept locally, not shipped in the repo
+documentation/
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts
