@@ -48,13 +48,23 @@ export default function NewsletterForm({
   const expanded = succeeded;
 
   // Label inside the peach block. Idle → "Subscribe"; in-flight → "Subscribing…";
-  // settled → "You're Subscribed". The success copy is intentionally the same
+  // settled → "Check your inbox" (double opt-in: signup is pending until the
+  // emailed link is confirmed). The success copy is intentionally the same
   // whether the email was new or already on the list (no enumeration).
   const restingLabel = pending ? "Subscribing…" : "Subscribe";
-  const successLabel = "You're Subscribed";
+  const successLabel = "Check your inbox";
 
   // Announced to assistive tech only once the action settles.
-  const liveMessage = succeeded ? successLabel : errored ? state.error : "";
+  const liveMessage = succeeded
+    ? "Check your inbox to confirm your subscription."
+    : errored
+      ? state.error
+      : "";
+
+  // Shown in the message slot on success: tells the user the signup isn't
+  // finished until they click the emailed confirmation link.
+  const confirmInstruction =
+    "We've emailed you a confirmation link — click it to finish subscribing.";
 
   // After a failed submit, return focus to the email field and reset Turnstile
   // (its token is single-use) so the user can correct and retry cleanly.
@@ -225,9 +235,10 @@ export default function NewsletterForm({
       )}
 
       {/*
-        Message slot: a single reserved-height region that holds either the
-        consent disclosure (idle/success) or the error — they swap in place so
-        nothing below the form shifts when an error appears or clears.
+        Message slot: a single reserved-height region that swaps in place so
+        nothing below the form shifts. Three states: an error, the post-signup
+        "check your inbox to confirm" instruction (double opt-in), or — by
+        default — the consent disclosure.
       */}
       <div className="mt-2" style={{ minHeight: "2.25rem" }}>
         {errored ? (
@@ -238,14 +249,17 @@ export default function NewsletterForm({
           >
             {state.error}
           </p>
+        ) : succeeded ? (
+          <p
+            className="text-xs leading-snug"
+            style={{ color: "var(--color-text-secondary)" }}
+          >
+            {confirmInstruction}
+          </p>
         ) : (
           <p
-            aria-hidden={succeeded}
             className="text-xs leading-snug transition-opacity duration-300 ease-out motion-reduce:transition-none"
-            style={{
-              color: "var(--color-text-muted)",
-              opacity: succeeded ? 0 : 1,
-            }}
+            style={{ color: "var(--color-text-muted)" }}
           >
             {CONSENT_TEXT}
           </p>

@@ -7,7 +7,10 @@ export default async function AdminDashboardPage() {
   const [postsCount, tagsCount, subscribersCount] = await Promise.all([
     supabase.from("posts").select("*", { count: "exact", head: true }),
     supabase.from("tags").select("*", { count: "exact", head: true }),
-    supabase.from("subscribers").select("*", { count: "exact", head: true }),
+    supabase
+      .from("subscribers")
+      .select("*", { count: "exact", head: true })
+      .eq("status", "confirmed"),
   ]);
 
   const stats = [

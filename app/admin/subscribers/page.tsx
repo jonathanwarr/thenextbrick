@@ -13,6 +13,7 @@ export default async function AdminSubscribersPage() {
     .order("created_at", { ascending: false });
 
   const counts = {
+    pending: subscribers?.filter((s) => s.status === "pending").length ?? 0,
     confirmed: subscribers?.filter((s) => s.status === "confirmed").length ?? 0,
     unsubscribed: subscribers?.filter((s) => s.status === "unsubscribed").length ?? 0,
   };
@@ -24,6 +25,7 @@ export default async function AdminSubscribersPage() {
           Subscribers
         </h1>
         <div className="flex gap-4 text-sm" style={{ color: "var(--color-text-secondary)" }}>
+          <span>{counts.pending} pending</span>
           <span>{counts.confirmed} confirmed</span>
           <span>{counts.unsubscribed} unsubscribed</span>
         </div>

@@ -3,7 +3,7 @@
 import { useRef } from "react";
 import { updateSubscriberStatus } from "@/app/admin/subscribers/actions";
 
-export type SubscriberStatus = "confirmed" | "unsubscribed";
+export type SubscriberStatus = "pending" | "confirmed" | "unsubscribed";
 
 export default function SubscriberStatusSelect({
   id,
@@ -27,6 +27,7 @@ export default function SubscriberStatusSelect({
           color: "var(--color-text-primary)",
         }}
       >
+        <option value="pending">Pending</option>
         <option value="confirmed">Confirmed</option>
         <option value="unsubscribed">Unsubscribed</option>
       </select>
