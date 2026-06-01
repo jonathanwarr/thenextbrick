@@ -2,6 +2,7 @@
 
 import { randomUUID } from "node:crypto";
 import { createServiceClient } from "@/lib/supabase/server";
+import { verifyTurnstile } from "@/lib/security/turnstile";
 import { CONSENT_TEXT } from "./consent";
 
 export type SubscribeState =
@@ -40,6 +41,20 @@ export async function subscribe(
   const email = String(formData.get("email") ?? "").trim().toLowerCase();
   const rawSource = String(formData.get("source") ?? "site");
   const source = KNOWN_SOURCES.has(rawSource) ? rawSource : "site";
+
+  // Honeypot: a hidden field no human fills. If it has content, it's a bot —
+  // pretend it worked (so it doesn't probe further) but write nothing.
+  if (String(formData.get("tnb_hp") ?? "").trim() !== "") {
+    return { ok: true, outcome: "subscribed" };
+  }
+
+  // Bot/spam gate. No-op until TURNSTILE_SECRET_KEY is configured (see
+  // lib/security/turnstile.ts). Runs before any DB work.
+  const token = formData.get("cf-turnstile-response");
+  const human = await verifyTurnstile(typeof token === "string" ? token : null);
+  if (!human) {
+    return { ok: false, error: "Couldn't verify you're human. Please try again." };
+  }
 
   if (!email || email.length > 254 || !EMAIL_RE.test(email)) {
     return { ok: false, error: "Please enter a valid email address." };
