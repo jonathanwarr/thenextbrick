@@ -4,7 +4,7 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
-import NewsletterForm from "@/components/ui/NewsletterForm";
+import NewsletterCTA from "@/components/ui/NewsletterCTA";
 import { CategoryIcon, categoryColors, categoryLabels } from "@/components/ui/BrickCard";
 import { getPostBySlug } from "@/lib/posts/queries";
 import { formatFullDate } from "@/lib/posts/format";
@@ -100,13 +100,7 @@ export default async function PostPage({ params }: { params: PostParams }) {
           </div>
         )}
 
-        <div className="mt-12 rounded-xl p-6" style={{ backgroundColor: "var(--color-surface)", border: "1px solid var(--color-border)" }}>
-          <p className="text-sm font-semibold mb-2">Get the next brick in your inbox.</p>
-          <p className="text-xs mb-4" style={{ color: "var(--color-text-secondary)" }}>
-            Weekly essays on building with Claude. Every Monday.
-          </p>
-          <NewsletterForm layout="horizontal" />
-        </div>
+        <NewsletterCTA source="brick-article" className="mt-12" />
       </main>
 
       <Footer />

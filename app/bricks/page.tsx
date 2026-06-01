@@ -2,7 +2,7 @@ import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import SearchBar from "@/components/ui/SearchBar";
 import BrickCard, { categoryColors, categoryLabels, CategoryIcon } from "@/components/ui/BrickCard";
-import NewsletterForm from "@/components/ui/NewsletterForm";
+import NewsletterCTA from "@/components/ui/NewsletterCTA";
 import Link from "next/link";
 import { listPublishedPosts, getFeaturedPost, listPopularTags, searchPosts } from "@/lib/posts/queries";
 import { formatShortDate } from "@/lib/posts/format";
@@ -278,39 +278,7 @@ export default async function BricksPage({
       </main>
 
       <div className="w-full max-w-7xl mx-auto px-6 mt-4 pb-6 shrink-0">
-        <div
-          className="flex items-center justify-between gap-10 rounded-xl px-8 py-4"
-          style={{
-            backgroundColor: "var(--color-dark)",
-            backgroundImage:
-              "radial-gradient(ellipse at 10% 50%, rgba(217,172,140,0.10) 0%, transparent 55%)",
-          }}
-        >
-          <div className="hidden md:flex flex-col gap-[3px] shrink-0 w-10">
-            <div className="flex gap-[3px] h-3">
-              <div className="flex-[2] rounded-[2px]" style={{ backgroundColor: "var(--color-primary)" }} />
-              <div className="flex-[1] rounded-[2px]" style={{ backgroundColor: "var(--color-surface)" }} />
-            </div>
-            <div className="flex gap-[3px] h-3">
-              <div className="flex-[1] rounded-[2px]" style={{ backgroundColor: "var(--color-surface)" }} />
-              <div className="flex-[2] rounded-[2px]" style={{ backgroundColor: "var(--color-primary)" }} />
-            </div>
-          </div>
-
-          <div className="shrink-0">
-            <h3 className="text-base font-bold leading-tight" style={{ color: "var(--color-bg)" }}>
-              Get Bricks By Email
-            </h3>
-            <p className="text-sm font-medium mt-0.5" style={{ color: "var(--color-secondary)" }}>
-              Quick reads to help you master{" "}
-              <span style={{ color: "var(--color-primary)" }}>Claude.</span>
-            </p>
-          </div>
-
-          <div className="flex-1 max-w-lg">
-            <NewsletterForm layout="horizontal" />
-          </div>
-        </div>
+        <NewsletterCTA source="bricks-index" />
       </div>
 
       <Footer />

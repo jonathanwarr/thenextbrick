@@ -1,7 +1,9 @@
 import { createServiceClient } from "@/lib/supabase/server";
 import { formatFullDate } from "@/lib/posts/format";
 import { deleteSubscriber } from "./actions";
-import SubscriberStatusSelect from "@/components/admin/SubscriberStatusSelect";
+import SubscriberStatusSelect, {
+  type SubscriberStatus,
+} from "@/components/admin/SubscriberStatusSelect";
 
 export default async function AdminSubscribersPage() {
   const supabase = createServiceClient();
@@ -11,7 +13,6 @@ export default async function AdminSubscribersPage() {
     .order("created_at", { ascending: false });
 
   const counts = {
-    pending: subscribers?.filter((s) => s.status === "pending").length ?? 0,
     confirmed: subscribers?.filter((s) => s.status === "confirmed").length ?? 0,
     unsubscribed: subscribers?.filter((s) => s.status === "unsubscribed").length ?? 0,
   };
@@ -24,7 +25,6 @@ export default async function AdminSubscribersPage() {
         </h1>
         <div className="flex gap-4 text-sm" style={{ color: "var(--color-text-secondary)" }}>
           <span>{counts.confirmed} confirmed</span>
-          <span>{counts.pending} pending</span>
           <span>{counts.unsubscribed} unsubscribed</span>
         </div>
       </div>
@@ -56,7 +56,10 @@ export default async function AdminSubscribersPage() {
                 <tr key={sub.id} className="border-t" style={{ borderColor: "var(--color-border)" }}>
                   <td className="px-4 py-3 font-medium">{sub.email}</td>
                   <td className="px-4 py-3">
-                    <SubscriberStatusSelect id={sub.id} current={sub.status} />
+                    <SubscriberStatusSelect
+                      id={sub.id}
+                      current={sub.status as SubscriberStatus}
+                    />
                   </td>
                   <td className="px-4 py-3" style={{ color: "var(--color-text-secondary)" }}>
                     {sub.source ?? "—"}

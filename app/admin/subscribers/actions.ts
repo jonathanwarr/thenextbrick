@@ -22,7 +22,6 @@ export async function updateSubscriberStatus(formData: FormData) {
   await requireAdmin();
   const id = String(formData.get("id") ?? "");
   const status = String(formData.get("status") ?? "") as
-    | "pending"
     | "confirmed"
     | "unsubscribed";
   if (!id || !status) return;
