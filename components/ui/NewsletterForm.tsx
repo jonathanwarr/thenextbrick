@@ -48,14 +48,10 @@ export default function NewsletterForm({
   const expanded = succeeded;
 
   // Label inside the peach block. Idle → "Subscribe"; in-flight → "Subscribing…";
-  // settled → the outcome copy (crossfaded once expanded).
+  // settled → "You're Subscribed". The success copy is intentionally the same
+  // whether the email was new or already on the list (no enumeration).
   const restingLabel = pending ? "Subscribing…" : "Subscribe";
-  const successLabel =
-    state?.ok === true
-      ? state.outcome === "already"
-        ? "Already subscribed"
-        : "You're Subscribed"
-      : "Subscribe";
+  const successLabel = "You're Subscribed";
 
   // Announced to assistive tech only once the action settles.
   const liveMessage = succeeded ? successLabel : errored ? state.error : "";

@@ -5,9 +5,11 @@ import { createServiceClient } from "@/lib/supabase/server";
 import { verifyTurnstile } from "@/lib/security/turnstile";
 import { CONSENT_TEXT } from "./consent";
 
-export type SubscribeState =
-  | { ok: true; outcome: "subscribed" | "already" }
-  | { ok: false; error: string };
+// Deliberately neutral on success: the client always gets the same { ok: true }
+// whether the email was new, already subscribed, or re-subscribed — so the form
+// can't be used to probe who is on the list (enumeration). Any per-case handling
+// stays server-side only.
+export type SubscribeState = { ok: true } | { ok: false; error: string };
 
 /**
  * Single-opt-in newsletter subscribe. Designed for `useActionState`, so it
@@ -45,7 +47,7 @@ export async function subscribe(
   // Honeypot: a hidden field no human fills. If it has content, it's a bot —
   // pretend it worked (so it doesn't probe further) but write nothing.
   if (String(formData.get("tnb_hp") ?? "").trim() !== "") {
-    return { ok: true, outcome: "subscribed" };
+    return { ok: true };
   }
 
   // Bot/spam gate. No-op until TURNSTILE_SECRET_KEY is configured (see
@@ -75,7 +77,8 @@ export async function subscribe(
   }
 
   if (existing?.status === "confirmed") {
-    return { ok: true, outcome: "already" };
+    // Already on the list — same neutral success, no "already" signal.
+    return { ok: true };
   }
 
   if (existing) {
@@ -112,12 +115,12 @@ export async function subscribe(
       // that as "already subscribed" rather than a generic failure — and avoid
       // overwriting the existing row's original consent record.
       if (error.code === "23505") {
-        return { ok: true, outcome: "already" };
+        return { ok: true };
       }
       console.error("subscribe insert failed:", error);
       return { ok: false, error: "Something went wrong. Please try again." };
     }
   }
 
-  return { ok: true, outcome: "subscribed" };
+  return { ok: true };
 }
