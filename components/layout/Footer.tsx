@@ -5,7 +5,6 @@ import { faLinkedinIn } from "@fortawesome/free-brands-svg-icons";
 const links = [
   { label: "Articles", href: "/bricks" },
   { label: "About", href: "/about" },
-  { label: "Privacy", href: "/privacy" },
 ];
 
 export default function Footer() {

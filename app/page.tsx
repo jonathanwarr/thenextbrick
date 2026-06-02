@@ -2,7 +2,6 @@ import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import SearchBar from "@/components/ui/SearchBar";
 import BrickCard from "@/components/ui/BrickCard";
-import NewsletterCTA from "@/components/ui/NewsletterCTA";
 import Link from "next/link";
 import { listPublishedPosts } from "@/lib/posts/queries";
 import { formatShortDate } from "@/lib/posts/format";
@@ -71,7 +70,7 @@ export default async function HomePage() {
           </div>
         </section>
 
-        {/* Articles + newsletter */}
+        {/* Articles */}
         <section className="flex-1 w-full max-w-7xl mx-auto px-6 flex flex-col pt-5 pb-6 min-h-0">
 
           {/* Section header */}
@@ -149,9 +148,6 @@ export default async function HomePage() {
               </p>
             </div>
           )}
-
-          {/* Newsletter */}
-          <NewsletterCTA source="home" className="mt-4 shrink-0" />
 
         </section>
       </main>

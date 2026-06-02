@@ -167,18 +167,6 @@ export default function Navbar() {
               </span>
             </span>
           </button>
-
-          {/* Subscribe */}
-          <Link
-            href="/subscribe"
-            className="px-4 py-2 rounded-lg text-sm font-semibold transition-opacity hover:opacity-90"
-            style={{
-              backgroundColor: "var(--color-primary)",
-              color: "var(--color-bg)",
-            }}
-          >
-            Subscribe
-          </Link>
         </div>
       </div>
     </header>

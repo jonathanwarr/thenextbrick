@@ -2,7 +2,6 @@ import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import SearchBar from "@/components/ui/SearchBar";
 import BrickCard, { categoryColors, categoryLabels, CategoryIcon } from "@/components/ui/BrickCard";
-import NewsletterCTA from "@/components/ui/NewsletterCTA";
 import Link from "next/link";
 import { listPublishedPosts, getFeaturedPost, listPopularTags, searchPosts } from "@/lib/posts/queries";
 import { formatShortDate } from "@/lib/posts/format";
@@ -276,10 +275,6 @@ export default async function BricksPage({
           </div>
         )}
       </main>
-
-      <div className="w-full max-w-7xl mx-auto px-6 mt-4 pb-6 shrink-0">
-        <NewsletterCTA source="bricks-index" />
-      </div>
 
       <Footer />
     </div>

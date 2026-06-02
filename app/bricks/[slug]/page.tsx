@@ -4,7 +4,6 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
-import NewsletterCTA from "@/components/ui/NewsletterCTA";
 import { CategoryIcon, categoryColors, categoryLabels } from "@/components/ui/BrickCard";
 import { getPostBySlug } from "@/lib/posts/queries";
 import { formatFullDate } from "@/lib/posts/format";
@@ -99,8 +98,6 @@ export default async function PostPage({ params }: { params: PostParams }) {
             ))}
           </div>
         )}
-
-        <NewsletterCTA source="brick-article" className="mt-12" />
       </main>
 
       <Footer />
