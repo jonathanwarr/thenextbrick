@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import PostForm from "@/components/admin/PostForm";
+import PostForm, { type PostFormValues } from "@/components/admin/PostForm";
 import { createServiceClient } from "@/lib/supabase/server";
 import { loadTagPickerData } from "@/lib/admin/tags";
 
@@ -55,9 +55,9 @@ export default async function EditPostPage({
         title: post.title,
         slug: post.slug,
         dek: post.dek ?? "",
-        body_md: post.body_md,
+        body_md: post.body_md ?? "",
         cover_variant: post.cover_variant ?? "",
-        status: post.status,
+        status: post.status as PostFormValues["status"],
         featured: post.featured,
         read_time_min: post.read_time_min,
         tags,
