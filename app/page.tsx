@@ -40,7 +40,7 @@ export default async function HomePage() {
   const recent = await listPublishedPosts({ limit: 3 });
 
   return (
-    <div className="h-screen flex flex-col overflow-hidden">
+    <div className="flex flex-col min-h-screen md:h-screen md:overflow-hidden">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: jsonLdString(homeJsonLd) }}
@@ -50,26 +50,26 @@ export default async function HomePage() {
       <main className="flex-1 flex flex-col min-h-0">
 
         {/* Hero */}
-        <section className="flex-1 flex flex-col items-center justify-center text-center px-6 pb-20">
+        <section className="flex flex-col items-center text-center px-6 py-12 md:flex-1 md:justify-center md:py-0 md:pb-20">
           {/* Editorial rule */}
           <div
-            className="flex items-center gap-4 w-full max-w-[640px] -mt-6 mb-11"
+            className="flex items-center gap-2 sm:gap-4 w-full max-w-[640px] mt-0 md:-mt-6 mb-11"
             style={{ animation: "fadeUp 0.5s ease both", animationDelay: "0ms" }}
           >
-            <div className="h-px flex-1" style={{ backgroundColor: "var(--color-border)" }} />
+            <div className="hidden sm:block h-px flex-1" style={{ backgroundColor: "var(--color-border)" }} />
             <span
-              className="text-[11px] font-bold tracking-[0.15em] uppercase whitespace-nowrap"
+              className="text-[11px] font-bold tracking-[0.15em] uppercase text-center"
               style={{ color: "var(--color-text-muted)" }}
             >
               Foundations
-              <span className="mx-2.5 opacity-50">·</span>
+              <span className="mx-1.5 sm:mx-2.5 opacity-50">·</span>
               Playbooks
-              <span className="mx-2.5 opacity-50">·</span>
+              <span className="mx-1.5 sm:mx-2.5 opacity-50">·</span>
               Signals
-              <span className="mx-2.5 opacity-50">·</span>
+              <span className="mx-1.5 sm:mx-2.5 opacity-50">·</span>
               Essays
             </span>
-            <div className="h-px flex-1" style={{ backgroundColor: "var(--color-border)" }} />
+            <div className="hidden sm:block h-px flex-1" style={{ backgroundColor: "var(--color-border)" }} />
           </div>
 
           {/* Headline */}
@@ -86,7 +86,7 @@ export default async function HomePage() {
 
           {/* Subtitle */}
           <p
-            className="text-xl mb-14 font-family-serif"
+            className="text-lg sm:text-xl mb-14 font-family-serif"
             style={{
               color: "var(--color-text-secondary)",
               letterSpacing: "var(--tracking-subtitle)",
@@ -111,7 +111,7 @@ export default async function HomePage() {
         </section>
 
         {/* Articles */}
-        <section className="flex-1 w-full max-w-7xl mx-auto px-6 flex flex-col pt-5 pb-6 min-h-0">
+        <section className="w-full max-w-7xl mx-auto px-6 flex flex-col pt-5 pb-10 md:flex-1 md:pb-6 md:min-h-0">
 
           {/* Section header */}
           <div className="flex items-center gap-3 mb-4">
@@ -133,10 +133,7 @@ export default async function HomePage() {
 
           {/* Article grid: featured (left, row-span-2) + 2 standard stacked (right) */}
           {recent.length > 0 ? (
-            <div
-              className="grid gap-3"
-              style={{ gridTemplateColumns: "2fr 1fr", gridTemplateRows: "1fr 1fr", flex: "1 1 0", minHeight: 0 }}
-            >
+            <div className="grid grid-cols-1 gap-3 md:[grid-template-columns:2fr_1fr] md:[grid-template-rows:1fr_1fr] md:[flex:1_1_0] md:min-h-0">
               {recent[0] && (
                 <BrickCard
                   slug={recent[0].slug}
@@ -147,7 +144,7 @@ export default async function HomePage() {
                   excerpt={recent[0].dek ?? undefined}
                   theBrick={recent[0].theBrick ?? undefined}
                   featured
-                  className="row-span-2"
+                  className="md:row-span-2"
                 />
               )}
               {recent[1] && (

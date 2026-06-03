@@ -35,8 +35,8 @@ export default async function AdminLayout({
           borderColor: "var(--color-border)",
         }}
       >
-        <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-3">
+        <div className="max-w-6xl mx-auto px-6 min-h-16 py-2 sm:py-0 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex items-center gap-3 min-w-0">
             <div className="flex flex-col gap-[2px] w-7 h-5 shrink-0">
               <div className="flex gap-[2px] flex-1">
                 <div className="flex-[2] rounded-[1px]" style={{ backgroundColor: "var(--color-primary)" }} />
@@ -47,11 +47,11 @@ export default async function AdminLayout({
                 <div className="flex-[2] rounded-[1px]" style={{ backgroundColor: "var(--color-primary)" }} />
               </div>
             </div>
-            <span className="font-medium">
+            <span className="font-medium truncate">
               Admin · {profile.display_name ?? user.email}
             </span>
           </div>
-          <nav className="flex items-center gap-6 text-sm">
+          <nav className="flex flex-wrap items-center gap-3 sm:gap-6 text-sm">
             <Link href="/admin" className="hover:opacity-75">Dashboard</Link>
             <Link href="/admin/posts" className="hover:opacity-75">Posts</Link>
             <Link href="/admin/subscribers" className="hover:opacity-75">Subscribers</Link>

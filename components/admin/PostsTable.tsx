@@ -90,7 +90,73 @@ export default function PostsTable({ posts }: { posts: AdminPostRow[] }) {
   const ordered = featured ? [featured, ...sorted] : sorted;
 
   return (
-    <table className="w-full text-sm">
+    <>
+    {/* Mobile: card list */}
+    <div className="md:hidden flex flex-col gap-3 p-3">
+      {ordered.map((post) => (
+        <div
+          key={post.id}
+          className="rounded-lg border p-4 flex flex-col gap-2"
+          style={{
+            borderColor: "var(--color-border)",
+            backgroundColor: post.featured ? "var(--color-surface)" : "var(--color-surface-raised)",
+          }}
+        >
+          <div className="flex items-start justify-between gap-2">
+            <div className="min-w-0">
+              <Link href={`/admin/posts/${post.id}`} className="font-medium hover:opacity-70">
+                {post.title}
+              </Link>
+              <p className="text-xs truncate" style={{ color: "var(--color-text-muted)" }}>
+                /bricks/{post.slug}
+              </p>
+            </div>
+            <form action={setFeatured} className="shrink-0">
+              <input type="hidden" name="id" value={post.id} />
+              <input type="hidden" name="featured" value={post.featured ? "false" : "true"} />
+              <button
+                type="submit"
+                className="flex items-center justify-center w-11 h-11 -m-2 rounded transition-opacity hover:opacity-70 cursor-pointer"
+                style={{ color: post.featured ? "var(--color-primary)" : "var(--color-text-muted)" }}
+                title={post.featured ? "Featured — click to clear" : "Make featured"}
+                aria-label={post.featured ? "Featured — click to clear" : "Make featured"}
+              >
+                <StarIcon filled={post.featured} />
+              </button>
+            </form>
+          </div>
+          <div className="flex flex-wrap items-center gap-2">
+            <span
+              className="inline-block text-xs px-2 py-0.5 rounded-full font-medium"
+              style={{
+                backgroundColor:
+                  post.status === "published"
+                    ? "var(--color-primary)"
+                    : post.status === "scheduled"
+                      ? "var(--color-secondary)"
+                      : "var(--color-surface)",
+                color: "var(--color-text-primary)",
+              }}
+            >
+              {post.status}
+            </span>
+            <span
+              className="inline-block text-xs px-2 py-0.5 rounded-full font-medium"
+              style={{ border: "1px solid var(--color-border)", color: "var(--color-text-secondary)" }}
+            >
+              {categoryLabels[normalizeCategory(post.category)]}
+            </span>
+          </div>
+          <div className="flex flex-wrap gap-x-4 gap-y-0.5 text-xs" style={{ color: "var(--color-text-secondary)" }}>
+            <span>Published: {post.published_at ? formatFullDate(new Date(post.published_at)) : "—"}</span>
+            <span>Updated: {formatFullDate(new Date(post.updated_at))}</span>
+          </div>
+        </div>
+      ))}
+    </div>
+
+    {/* Desktop: sortable table */}
+    <table className="hidden md:table w-full text-sm">
       <thead style={{ backgroundColor: "var(--color-surface)" }}>
         <tr>
           <th className="w-10 px-2 py-3" aria-label="Featured" />
@@ -189,5 +255,6 @@ export default function PostsTable({ posts }: { posts: AdminPostRow[] }) {
         ))}
       </tbody>
     </table>
+    </>
   );
 }

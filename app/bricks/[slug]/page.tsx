@@ -123,7 +123,7 @@ export default async function PostPage({ params }: { params: PostParams }) {
         </div>
 
         <h1
-          className="text-4xl md:text-5xl font-medium leading-tight mb-8"
+          className="text-3xl sm:text-4xl md:text-5xl font-medium leading-tight mb-8"
           style={{ fontFamily: "var(--font-family-serif)" }}
         >
           {post.title}
@@ -168,7 +168,7 @@ export default async function PostPage({ params }: { params: PostParams }) {
               <Link
                 key={tag}
                 href={`/bricks?tag=${tag}`}
-                className="text-xs px-3 py-1 rounded-full font-medium hover:opacity-80"
+                className="text-xs px-3 py-2 sm:py-1 rounded-full font-medium hover:opacity-80"
                 style={{
                   backgroundColor: "var(--color-surface)",
                   color: "var(--color-text-secondary)",

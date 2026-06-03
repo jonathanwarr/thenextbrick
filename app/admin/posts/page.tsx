@@ -12,7 +12,7 @@ export default async function AdminPostsListPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-medium" style={{ fontFamily: "var(--font-family-serif)" }}>
+        <h1 className="text-2xl sm:text-3xl font-medium" style={{ fontFamily: "var(--font-family-serif)" }}>
           Posts
         </h1>
         <Link

@@ -23,12 +23,12 @@ export default function Footer() {
         <span className="text-xs" style={{ color: "var(--color-text-muted)" }}>
           © {new Date().getFullYear()} The Next Brick
         </span>
-        <nav className="flex items-center gap-6">
+        <nav className="flex items-center gap-4 sm:gap-6">
           {links.map(({ label, href }) => (
             <Link
               key={href}
               href={href}
-              className="text-xs transition-opacity hover:opacity-70"
+              className="text-xs py-2 transition-opacity hover:opacity-70"
               style={{ color: "var(--color-text-muted)" }}
             >
               {label}
@@ -38,7 +38,7 @@ export default function Footer() {
             href="https://www.linkedin.com/in/jonathan-warr/"
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center justify-center w-5 h-5 rounded transition-opacity hover:opacity-80"
+            className="relative flex items-center justify-center w-5 h-5 rounded transition-opacity hover:opacity-80 before:absolute before:-inset-2.5 before:content-['']"
             style={{ backgroundColor: "var(--color-dark)", color: "var(--color-tag-text)" }}
             aria-label="LinkedIn"
           >

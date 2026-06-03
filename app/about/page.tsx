@@ -296,17 +296,17 @@ function PullQuote({ children }: { children: React.ReactNode }) {
       style={{ fontFamily: "var(--font-family-serif)" }}
     >
       <div
-        className="h-px w-72 mx-auto mb-6"
+        className="h-px w-40 sm:w-72 mx-auto mb-6"
         style={{ backgroundColor: "var(--color-primary)" }}
       />
       <p
-        className="text-2xl md:text-3xl italic leading-snug"
+        className="text-xl sm:text-2xl md:text-3xl italic leading-snug"
         style={{ color: "var(--color-text-primary)" }}
       >
         {children}
       </p>
       <div
-        className="h-px w-72 mx-auto mt-6"
+        className="h-px w-40 sm:w-72 mx-auto mt-6"
         style={{ backgroundColor: "var(--color-primary)" }}
       />
     </aside>
@@ -322,10 +322,10 @@ const tabs = [
 
 export default function AboutPage() {
   return (
-    <div className="h-screen flex flex-col overflow-hidden">
+    <div className="flex flex-col min-h-screen md:h-screen md:overflow-hidden">
       <Navbar />
 
-      <main className="flex-1 max-w-7xl mx-auto w-full px-6 pt-12 flex flex-col min-h-0">
+      <main className="flex-1 max-w-7xl mx-auto w-full px-6 pt-8 sm:pt-12 flex flex-col md:min-h-0">
         {/* Editorial rule eyebrow */}
         <div
           className="flex items-center gap-4 mb-5 shrink-0"
@@ -351,7 +351,7 @@ export default function AboutPage() {
             style={{ animation: "fadeUp 0.5s ease both", animationDelay: "80ms" }}
           >
             <h1
-              className="text-5xl md:text-[3.5rem] font-medium leading-[1.05] tracking-tight"
+              className="text-4xl sm:text-5xl md:text-[3.5rem] font-medium leading-[1.05] tracking-tight"
               style={{
                 fontFamily: "var(--font-family-serif)",
                 color: "var(--color-primary)",

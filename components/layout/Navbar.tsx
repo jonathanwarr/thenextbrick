@@ -19,6 +19,25 @@ function BrickIcon() {
   );
 }
 
+function MenuIcon({ open }: { open: boolean }) {
+  return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+      {open ? (
+        <>
+          <line x1="6" y1="6" x2="18" y2="18" />
+          <line x1="18" y1="6" x2="6" y2="18" />
+        </>
+      ) : (
+        <>
+          <line x1="3" y1="6" x2="21" y2="6" />
+          <line x1="3" y1="12" x2="21" y2="12" />
+          <line x1="3" y1="18" x2="21" y2="18" />
+        </>
+      )}
+    </svg>
+  );
+}
+
 function MoonIcon() {
   return (
     <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
@@ -52,6 +71,7 @@ const navLinks = [
 export default function Navbar() {
   const pathname = usePathname();
   const [isDark, setIsDark] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
     const saved = localStorage.getItem("theme");
@@ -61,6 +81,11 @@ export default function Navbar() {
     document.documentElement.classList.toggle("dark", dark);
     document.documentElement.classList.toggle("light", !dark);
   }, []);
+
+  // Close the mobile menu on navigation.
+  useEffect(() => {
+    setMenuOpen(false);
+  }, [pathname]);
 
   function toggleTheme() {
     const next = !isDark;
@@ -126,10 +151,22 @@ export default function Navbar() {
             })}
           </nav>
 
+          {/* Hamburger (mobile only) */}
+          <button
+            onClick={() => setMenuOpen((o) => !o)}
+            className="md:hidden flex items-center justify-center w-11 h-11 rounded-lg cursor-pointer transition-opacity hover:opacity-70"
+            style={{ color: "var(--color-text-secondary)" }}
+            aria-label="Menu"
+            aria-expanded={menuOpen}
+            aria-controls="mobile-nav"
+          >
+            <MenuIcon open={menuOpen} />
+          </button>
+
           {/* Theme toggle */}
           <button
             onClick={toggleTheme}
-            className="relative flex items-center w-12 h-6 rounded-full border transition-colors duration-300 cursor-pointer"
+            className="relative flex items-center w-12 h-6 rounded-full border transition-colors duration-300 cursor-pointer before:absolute before:-inset-2.5 before:content-['']"
             style={{
               backgroundColor: isDark ? "var(--color-dark)" : "var(--color-surface)",
               borderColor: "var(--color-border)",
@@ -169,6 +206,34 @@ export default function Navbar() {
           </button>
         </div>
       </div>
+
+      {/* Mobile nav panel */}
+      {menuOpen && (
+        <nav
+          id="mobile-nav"
+          className="md:hidden border-t px-6 py-2"
+          style={{ borderColor: "var(--color-border)" }}
+        >
+          {navLinks.map(({ href, label }) => {
+            const isActive =
+              href === "/" ? pathname === "/" : pathname.startsWith(href);
+            return (
+              <Link
+                key={href}
+                href={href}
+                onClick={() => setMenuOpen(false)}
+                className="block py-3 text-lg font-semibold transition-colors"
+                style={{
+                  fontFamily: "var(--font-family-serif)",
+                  color: isActive ? "var(--color-primary)" : "var(--color-text-secondary)",
+                }}
+              >
+                {label}
+              </Link>
+            );
+          })}
+        </nav>
+      )}
     </header>
   );
 }

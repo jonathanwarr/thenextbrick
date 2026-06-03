@@ -48,7 +48,7 @@ export default function PostForm({
           >
             ← All posts
           </Link>
-          <h1 className="text-3xl font-medium mt-2" style={{ fontFamily: "var(--font-family-serif)" }}>
+          <h1 className="text-2xl sm:text-3xl font-medium mt-2" style={{ fontFamily: "var(--font-family-serif)" }}>
             {isEdit ? "Edit post" : "New post"}
           </h1>
         </div>
@@ -109,7 +109,7 @@ export default function PostForm({
           />
         </Field>
 
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <Field label="Slug" hint="lowercase-with-dashes. Defaults to slugified title.">
             <input
               type="text"
@@ -182,7 +182,7 @@ export default function PostForm({
           />
         </Field>
 
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <Field label="Type" hint="Foundations explain core ideas · Playbooks walk through building things · Signals are timely takes on what changed · Essays go deep.">
             <select
               name="category"

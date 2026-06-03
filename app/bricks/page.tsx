@@ -26,14 +26,14 @@ function FeaturedCard({ article }: { article: PostListItem }) {
   return (
     <Link
       href={`/bricks/${article.slug}`}
-      className="col-span-2 flex rounded-xl overflow-hidden transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md"
+      className="col-span-1 sm:col-span-2 flex flex-col sm:flex-row rounded-xl overflow-hidden transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md"
       style={{
         backgroundColor: "var(--color-surface-raised)",
         border: "1px solid var(--color-border)",
         borderTop: `3px solid ${accentColor}`,
       }}
     >
-      <div className="w-1/4 shrink-0 relative overflow-hidden">
+      <div className="w-full h-24 sm:h-auto sm:w-1/4 shrink-0 relative overflow-hidden">
         <div className="absolute inset-0" style={{ backgroundColor: "var(--color-secondary)", opacity: 0.7 }} />
         <span
           className="absolute top-3 left-3 z-10 text-[10px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-full"
@@ -137,7 +137,7 @@ export default async function BricksPage({
           </span>
         </p>
 
-        <h1 className="text-4xl font-medium mb-2">Every Brick, Searchable.</h1>
+        <h1 className="text-3xl sm:text-4xl font-medium mb-2">Every Brick, Searchable.</h1>
         <p className="text-sm mb-8" style={{ color: "var(--color-text-secondary)" }}>
           Search for any content by title, tag, or keyword.
         </p>
@@ -179,7 +179,7 @@ export default async function BricksPage({
             </p>
           </div>
         ) : (
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
             {featuredArticle && <FeaturedCard article={featuredArticle} />}
             {gridArticles.map((article) => (
               <BrickCard
@@ -195,7 +195,7 @@ export default async function BricksPage({
         )}
 
         {totalPages > 1 && (
-          <div className="flex items-center justify-between mt-12 pt-6 border-t" style={{ borderColor: "var(--color-border)" }}>
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mt-12 pt-6 border-t" style={{ borderColor: "var(--color-border)" }}>
             <p className="text-xs" style={{ color: "var(--color-text-muted)" }}>
               Page {page} of {totalPages} | {totalPosts} Articles
             </p>
@@ -203,7 +203,7 @@ export default async function BricksPage({
               {page > 1 && (
                 <Link
                   href={pageHref(page - 1)}
-                  className="w-8 h-8 flex items-center justify-center rounded-lg text-xs font-medium"
+                  className="w-10 h-10 sm:w-8 sm:h-8 flex items-center justify-center rounded-lg text-xs font-medium"
                   style={{
                     backgroundColor: "var(--color-surface)",
                     color: "var(--color-text-secondary)",
@@ -213,27 +213,29 @@ export default async function BricksPage({
                   ←
                 </Link>
               )}
-              {Array.from({ length: totalPages }, (_, i) => i + 1).map((n) => {
-                const isActive = n === page;
-                return (
-                  <Link
-                    key={n}
-                    href={pageHref(n)}
-                    className="w-8 h-8 flex items-center justify-center rounded-lg text-xs font-medium"
-                    style={{
-                      backgroundColor: isActive ? "var(--color-primary)" : "var(--color-surface)",
-                      color: isActive ? "var(--color-dark)" : "var(--color-text-secondary)",
-                      border: "1px solid var(--color-border)",
-                    }}
-                  >
-                    {n}
-                  </Link>
-                );
-              })}
+              <div className="hidden sm:flex items-center gap-1">
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map((n) => {
+                  const isActive = n === page;
+                  return (
+                    <Link
+                      key={n}
+                      href={pageHref(n)}
+                      className="w-8 h-8 flex items-center justify-center rounded-lg text-xs font-medium"
+                      style={{
+                        backgroundColor: isActive ? "var(--color-primary)" : "var(--color-surface)",
+                        color: isActive ? "var(--color-dark)" : "var(--color-text-secondary)",
+                        border: "1px solid var(--color-border)",
+                      }}
+                    >
+                      {n}
+                    </Link>
+                  );
+                })}
+              </div>
               {page < totalPages && (
                 <Link
                   href={pageHref(page + 1)}
-                  className="w-8 h-8 flex items-center justify-center rounded-lg text-xs font-medium"
+                  className="w-10 h-10 sm:w-8 sm:h-8 flex items-center justify-center rounded-lg text-xs font-medium"
                   style={{
                     backgroundColor: "var(--color-surface)",
                     color: "var(--color-text-secondary)",

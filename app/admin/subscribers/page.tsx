@@ -20,8 +20,8 @@ export default async function AdminSubscribersPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-end justify-between">
-        <h1 className="text-3xl font-medium" style={{ fontFamily: "var(--font-family-serif)" }}>
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+        <h1 className="text-2xl sm:text-3xl font-medium" style={{ fontFamily: "var(--font-family-serif)" }}>
           Subscribers
         </h1>
         <div className="flex gap-4 text-sm" style={{ color: "var(--color-text-secondary)" }}>
@@ -43,7 +43,41 @@ export default async function AdminSubscribersPage() {
             <p className="font-medium">No subscribers yet.</p>
           </div>
         ) : (
-          <table className="w-full text-sm">
+          <>
+          {/* Mobile: card list */}
+          <div className="md:hidden flex flex-col gap-3 p-3">
+            {subscribers.map((sub) => (
+              <div
+                key={sub.id}
+                className="rounded-lg border p-4 flex flex-col gap-2"
+                style={{ borderColor: "var(--color-border)", backgroundColor: "var(--color-surface)" }}
+              >
+                <div className="flex items-start justify-between gap-2">
+                  <span className="font-medium break-all min-w-0">{sub.email}</span>
+                  <form action={deleteSubscriber} className="shrink-0">
+                    <input type="hidden" name="id" value={sub.id} />
+                    <button
+                      type="submit"
+                      className="text-xs py-2 px-1 hover:opacity-70 cursor-pointer"
+                      style={{ color: "var(--color-text-muted)" }}
+                    >
+                      Delete
+                    </button>
+                  </form>
+                </div>
+                <div>
+                  <SubscriberStatusSelect id={sub.id} current={sub.status as SubscriberStatus} />
+                </div>
+                <div className="flex flex-wrap gap-x-4 gap-y-0.5 text-xs" style={{ color: "var(--color-text-secondary)" }}>
+                  <span>Source: {sub.source ?? "—"}</span>
+                  <span>Joined: {formatFullDate(new Date(sub.created_at))}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Desktop: table */}
+          <table className="hidden md:table w-full text-sm">
             <thead style={{ backgroundColor: "var(--color-surface)" }}>
               <tr>
                 <th className="text-left px-4 py-3 font-semibold text-xs uppercase tracking-wider" style={{ color: "var(--color-text-muted)" }}>Email</th>
@@ -85,6 +119,7 @@ export default async function AdminSubscribersPage() {
               ))}
             </tbody>
           </table>
+          </>
         )}
       </div>
     </div>
