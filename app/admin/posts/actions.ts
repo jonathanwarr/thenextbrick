@@ -3,6 +3,7 @@
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { createClient, createServiceClient } from "@/lib/supabase/server";
+import { normalizeCategory } from "@/lib/posts/types";
 
 function slugify(input: string): string {
   return input
@@ -109,10 +110,10 @@ export async function savePost(formData: FormData) {
   const title = String(formData.get("title") ?? "").trim();
   const slug = String(formData.get("slug") ?? "").trim() || slugify(title);
   const dek = String(formData.get("dek") ?? "").trim() || null;
+  const the_brick = String(formData.get("the_brick") ?? "").trim() || null;
   const body_md = String(formData.get("body_md") ?? "");
-  const cover_variant = String(formData.get("cover_variant") ?? "").trim() || null;
+  const category = normalizeCategory(String(formData.get("category") ?? ""));
   const status = String(formData.get("status") ?? "draft") as PostStatus;
-  const featured = formData.get("featured") === "on";
   const tagSlugs = formData.getAll("tags").map((v) => String(v));
   const readTimeRaw = String(formData.get("read_time_min") ?? "").trim();
   const read_time_min = readTimeRaw ? Number(readTimeRaw) : null;
@@ -135,10 +136,10 @@ export async function savePost(formData: FormData) {
         title,
         slug,
         dek,
+        the_brick,
         body_md,
-        cover_variant,
+        category,
         status,
-        featured,
         read_time_min,
         published_at,
       })
@@ -158,10 +159,11 @@ export async function savePost(formData: FormData) {
         title,
         slug,
         dek,
+        the_brick,
         body_md,
-        cover_variant,
+        category,
         status,
-        featured,
+        featured: false,
         read_time_min,
         published_at,
         author_id: userId,
@@ -175,6 +177,30 @@ export async function savePost(formData: FormData) {
     revalidatePath("/");
     redirect(`/admin/posts/${data.id}?saved=1`);
   }
+}
+
+/**
+ * Sets (or clears) the single featured post. Featured is managed only here —
+ * the editor no longer touches it. When featuring a post we clear any existing
+ * featured row first, both so the swap is atomic from the user's view and so we
+ * never momentarily violate the `posts_one_featured_idx` unique index.
+ */
+export async function setFeatured(formData: FormData) {
+  const { supabase } = await requireAdmin();
+  const id = String(formData.get("id") ?? "");
+  if (!id) return;
+  const makeFeatured = String(formData.get("featured") ?? "") === "true";
+
+  if (makeFeatured) {
+    await supabase.from("posts").update({ featured: false }).eq("featured", true);
+    await supabase.from("posts").update({ featured: true }).eq("id", id);
+  } else {
+    await supabase.from("posts").update({ featured: false }).eq("id", id);
+  }
+
+  revalidatePath("/admin/posts");
+  revalidatePath("/bricks");
+  revalidatePath("/");
 }
 
 export async function deletePost(formData: FormData) {

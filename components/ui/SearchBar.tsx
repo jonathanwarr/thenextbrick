@@ -10,7 +10,7 @@ interface SearchBarProps {
   size?: "hero" | "page";
 }
 
-type Category = "foundations" | "builds" | "observations" | "essays";
+type Category = "foundations" | "playbooks" | "signals" | "essays";
 
 type ArticleResult = {
   slug: string;
@@ -55,17 +55,17 @@ function FoundationsIcon() {
     </svg>
   );
 }
-function BuildsIcon() {
+function PlaybooksIcon() {
   return (
     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z" />
+      <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" /><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
     </svg>
   );
 }
-function ObservationsIcon() {
+function SignalsIcon() {
   return (
     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <circle cx="12" cy="12" r="3" /><path d="M2 12s3.273-7 10-7 10 7 10 7-3.273 7-10 7S2 12 2 12z" />
+      <path d="M4 11a9 9 0 0 1 9 9" /><path d="M4 4a16 16 0 0 1 16 16" /><circle cx="5" cy="19" r="1" />
     </svg>
   );
 }
@@ -79,15 +79,15 @@ function EssaysIcon() {
 
 const categoryIcon: Record<Category, React.ReactNode> = {
   foundations: <FoundationsIcon />,
-  builds: <BuildsIcon />,
-  observations: <ObservationsIcon />,
+  playbooks: <PlaybooksIcon />,
+  signals: <SignalsIcon />,
   essays: <EssaysIcon />,
 };
 
 const categoryLabel: Record<Category, string> = {
   foundations: "Foundations",
-  builds: "Builds",
-  observations: "Observations",
+  playbooks: "Playbooks",
+  signals: "Signals",
   essays: "Essays",
 };
 
@@ -234,7 +234,7 @@ export default function SearchBar({ initialQuery = "", size = "hero" }: SearchBa
           onChange={(e) => setQuery(e.target.value)}
           onKeyDown={handleKeyDown}
           onFocus={() => setIsFocused(true)}
-          placeholder="Search articles, essays, tags…"
+          placeholder="Search articles, tags or keywords"
           className="flex-1 bg-transparent text-sm outline-none"
           style={{ color: "var(--color-text-primary)" }}
           aria-label="Search"
@@ -290,7 +290,7 @@ export default function SearchBar({ initialQuery = "", size = "hero" }: SearchBa
                       onClick={() => setIsFocused(false)}
                       className="flex items-center gap-3 px-5 py-3 transition-colors"
                       style={{
-                        backgroundColor: selectedIndex === i ? "var(--color-surface)" : "transparent",
+                        backgroundColor: selectedIndex === i ? "var(--color-accent)" : "transparent",
                       }}
                       onMouseEnter={() => setSelectedIndex(i)}
                     >
@@ -300,9 +300,9 @@ export default function SearchBar({ initialQuery = "", size = "hero" }: SearchBa
                       >
                         <TagIcon />
                       </span>
-                      <span className="flex-1 text-sm" style={{ color: "var(--color-text-primary)" }}>
+                      <span className="flex-1 text-sm" style={{ color: selectedIndex === i ? "var(--color-dark)" : "var(--color-text-primary)" }}>
                         #{tag.slug}
-                        <span className="ml-1.5" style={{ color: "var(--color-text-muted)" }}>
+                        <span className="ml-1.5" style={{ color: selectedIndex === i ? "rgba(40,39,36,0.7)" : "var(--color-text-muted)" }}>
                           · {tag.count} {tag.count === 1 ? "article" : "articles"}
                         </span>
                       </span>
@@ -323,7 +323,7 @@ export default function SearchBar({ initialQuery = "", size = "hero" }: SearchBa
                         onClick={() => setIsFocused(false)}
                         className="flex items-center gap-3 px-5 py-3 transition-colors"
                         style={{
-                          backgroundColor: selectedIndex === globalIndex ? "var(--color-surface)" : "transparent",
+                          backgroundColor: selectedIndex === globalIndex ? "var(--color-accent)" : "transparent",
                         }}
                         onMouseEnter={() => setSelectedIndex(globalIndex)}
                       >
@@ -333,7 +333,7 @@ export default function SearchBar({ initialQuery = "", size = "hero" }: SearchBa
                         >
                           {categoryIcon[article.category]}
                         </span>
-                        <span className="flex-1 text-sm truncate" style={{ color: "var(--color-text-primary)" }}>
+                        <span className="flex-1 text-sm truncate" style={{ color: selectedIndex === globalIndex ? "var(--color-dark)" : "var(--color-text-primary)" }}>
                           {article.title}
                         </span>
                         <span

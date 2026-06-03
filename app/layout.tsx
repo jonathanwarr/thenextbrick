@@ -1,6 +1,7 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Work_Sans, Newsreader } from "next/font/google";
 import "./globals.css";
+import { siteConfig } from "@/lib/site";
 
 const workSans = Work_Sans({
   variable: "--font-work-sans",
@@ -15,10 +16,39 @@ const newsreader = Newsreader({
   style: ["normal", "italic"],
 });
 
+const defaultTitle = "The Next Brick — AI Enablement, One Brick at a Time";
+
 export const metadata: Metadata = {
-  title: "The Next Brick — Master Claude. One Brick at a Time.",
-  description:
-    "Articles and essays for non-technical professionals learning to become fluent with Claude.",
+  metadataBase: new URL(siteConfig.url),
+  title: {
+    default: defaultTitle,
+    template: "%s — The Next Brick",
+  },
+  description: siteConfig.description,
+  applicationName: siteConfig.name,
+  authors: [{ name: siteConfig.author.name, url: siteConfig.author.linkedin }],
+  creator: siteConfig.author.name,
+  openGraph: {
+    type: "website",
+    siteName: siteConfig.name,
+    title: defaultTitle,
+    description: siteConfig.description,
+    url: siteConfig.url,
+    locale: siteConfig.locale,
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: defaultTitle,
+    description: siteConfig.description,
+  },
+};
+
+// Colors the mobile browser chrome (address bar) to match each theme.
+export const viewport: Viewport = {
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#FAF8F5" },
+    { media: "(prefers-color-scheme: dark)", color: "#282724" },
+  ],
 };
 
 export default function RootLayout({

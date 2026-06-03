@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import PostForm, { type PostFormValues } from "@/components/admin/PostForm";
 import { createServiceClient } from "@/lib/supabase/server";
 import { loadTagPickerData } from "@/lib/admin/tags";
+import { normalizeCategory } from "@/lib/posts/types";
 
 type EditPostParams = Promise<{ id: string }>;
 type EditPostSearchParams = Promise<{ saved?: string; error?: string }>;
@@ -25,10 +26,10 @@ export default async function EditPostPage({
         slug,
         title,
         dek,
+        the_brick,
         body_md,
-        cover_variant,
+        category,
         status,
-        featured,
         read_time_min,
         published_at,
         post_tags ( tag:tags ( slug ) )
@@ -55,10 +56,10 @@ export default async function EditPostPage({
         title: post.title,
         slug: post.slug,
         dek: post.dek ?? "",
+        the_brick: post.the_brick ?? "",
         body_md: post.body_md ?? "",
-        cover_variant: post.cover_variant ?? "",
+        category: normalizeCategory(post.category),
         status: post.status as PostFormValues["status"],
-        featured: post.featured,
         read_time_min: post.read_time_min,
         tags,
         published_at: post.published_at,

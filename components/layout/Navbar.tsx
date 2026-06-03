@@ -103,29 +103,29 @@ export default function Navbar() {
           </span>
         </Link>
 
-        {/* Nav */}
-        <nav className="hidden md:flex items-center gap-8">
-          {navLinks.map(({ href, label }) => {
-            const isActive =
-              href === "/" ? pathname === "/" : pathname.startsWith(href);
-            return (
-              <Link
-                key={href}
-                href={href}
-                className="text-[15px] font-semibold transition-colors"
-                style={{
-                  fontFamily: "var(--font-family-serif)",
-                  color: isActive ? "var(--color-primary)" : "var(--color-text-secondary)",
-                }}
-              >
-                {label}
-              </Link>
-            );
-          })}
-        </nav>
+        {/* Right group: nav + theme toggle, aligned right */}
+        <div className="flex items-center gap-6">
+          {/* Nav */}
+          <nav className="hidden md:flex items-center gap-8">
+            {navLinks.map(({ href, label }) => {
+              const isActive =
+                href === "/" ? pathname === "/" : pathname.startsWith(href);
+              return (
+                <Link
+                  key={href}
+                  href={href}
+                  className="text-[15px] font-semibold transition-colors"
+                  style={{
+                    fontFamily: "var(--font-family-serif)",
+                    color: isActive ? "var(--color-primary)" : "var(--color-text-secondary)",
+                  }}
+                >
+                  {label}
+                </Link>
+              );
+            })}
+          </nav>
 
-        {/* Right actions */}
-        <div className="flex items-center gap-3">
           {/* Theme toggle */}
           <button
             onClick={toggleTheme}

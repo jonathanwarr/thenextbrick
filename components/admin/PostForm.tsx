@@ -5,16 +5,18 @@ import TagPicker, {
   type AvailableTag,
 } from "./TagPicker";
 import PublishedAtInput from "./PublishedAtInput";
+import { KNOWN_CATEGORIES } from "@/lib/posts/types";
+import { categoryLabels, type Category } from "@/components/ui/BrickCard";
 
 export type PostFormValues = {
   id?: string;
   title: string;
   slug: string;
   dek: string;
+  the_brick: string;
   body_md: string;
-  cover_variant: string;
+  category: Category;
   status: "draft" | "scheduled" | "published";
-  featured: boolean;
   read_time_min: number | null;
   tags: string[];
   published_at: string | null;
@@ -148,6 +150,19 @@ export default function PostForm({
           />
         </Field>
 
+        <Field
+          label="The Brick"
+          hint="The article's value prop, given to the reader immediately. Fills the featured card and shows as a callout near the top of the article. 1 sentence."
+        >
+          <textarea
+            name="the_brick"
+            defaultValue={values.the_brick}
+            rows={3}
+            className="w-full px-4 py-2.5 rounded-lg outline-none leading-relaxed"
+            style={fieldStyle}
+          />
+        </Field>
+
         <Field label="Body (Markdown)" required>
           <textarea
             name="body_md"
@@ -168,14 +183,19 @@ export default function PostForm({
         </Field>
 
         <div className="grid grid-cols-2 gap-4">
-          <Field label="Cover variant" hint="Optional.">
-            <input
-              type="text"
-              name="cover_variant"
-              defaultValue={values.cover_variant}
+          <Field label="Type" hint="Foundations explain core ideas · Playbooks walk through building things · Signals are timely takes on what changed · Essays go deep.">
+            <select
+              name="category"
+              defaultValue={values.category}
               className="w-full px-4 py-2.5 rounded-lg outline-none"
               style={fieldStyle}
-            />
+            >
+              {KNOWN_CATEGORIES.map((c) => (
+                <option key={c} value={c}>
+                  {categoryLabels[c]}
+                </option>
+              ))}
+            </select>
           </Field>
           <Field label="Read time (minutes)">
             <input
@@ -188,17 +208,6 @@ export default function PostForm({
             />
           </Field>
         </div>
-
-        <label className="inline-flex items-center gap-2 cursor-pointer">
-          <input
-            type="checkbox"
-            name="featured"
-            defaultChecked={values.featured}
-            className="w-4 h-4 accent-current"
-            style={{ accentColor: "var(--color-primary)" }}
-          />
-          <span className="text-sm">Featured</span>
-        </label>
 
         <div className="flex items-center gap-3 pt-4 border-t" style={{ borderColor: "var(--color-border)" }}>
           <button

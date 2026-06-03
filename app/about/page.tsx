@@ -5,9 +5,10 @@ import Footer from "@/components/layout/Footer";
 import AboutTabs from "@/components/about/AboutTabs";
 
 export const metadata: Metadata = {
-  title: "About — The Next Brick",
+  title: "About",
   description:
     "About Jonathan Warr and The Next Brick — AI enablement for operations professionals, one brick at a time.",
+  alternates: { canonical: "/about" },
 };
 
 function AboutMeContent() {

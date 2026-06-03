@@ -1,33 +1,34 @@
 @import "tailwindcss";
 
 @theme inline {
-  /* Brand */
-  --color-primary: #D9AC8C;
-  --color-secondary: #CFBCAF;
+  /* Brand (shared across modes) */
+  --color-primary: #C28B70;   /* brand-primary */
+  --color-accent: #D9AC8C;    /* brand-accent-primary */
+  --color-secondary: #CCBDB2; /* brand-accent-secondary */
 
-  /* Backgrounds */
-  --color-bg: #F9F7F5;
-  --color-surface: #F0ECE8;
-  --color-surface-raised: #FFFFFF;
+  /* Backgrounds (mode-dependent; defaults = light) */
+  --color-bg: #FAF8F5;             /* lm-bg-primary */
+  --color-surface: #F0EEE6;        /* lm-bg-surface-primary */
+  --color-surface-raised: #E8E6DC; /* lm-bg-surface-secondary */
 
   /* Text */
-  --color-text-primary: #2C2118;
-  --color-text-secondary: #7A6B63;
-  --color-text-muted: #A89E98;
+  --color-text-primary: #363430;   /* lm-text-primary (mode-dependent) */
+  --color-text-secondary: #504F49; /* dm-bg-surface-secondary (mode-dependent) */
+  --color-text-muted: #76746C;     /* lm-text-muted (mode-dependent) */
 
   /* UI */
-  --color-border: #E0DAD5;
-  --color-tag-bg: #423F3E;
-  --color-tag-text: #F9F7F5;
+  --color-border: #E8E6DC;  /* lm-bg-surface-secondary (mode-dependent) */
+  --color-tag-bg: #282724;  /* dm-bg-primary */
+  --color-tag-text: #F0ECE6; /* dm-text-primary */
 
-  /* Brickyard status */
-  --color-shipped: #C6BCB9;
-  --color-publishing: #D9AC8C;
-  --color-drafting: #CFBCAF;
+  /* Brickyard status (mapped onto the brand ramp) */
+  --color-shipped: #CCBDB2;    /* brand-accent-secondary */
+  --color-publishing: #D9AC8C; /* brand-accent-primary */
+  --color-drafting: #C28B70;   /* brand-primary */
 
-  /* Dark surfaces */
-  --color-dark: #423F3E;
-  --color-dark-subtle: rgba(66, 63, 62, 0.15);
+  /* Constant dark (footer, dark text on accent chips, tags) */
+  --color-dark: #282724;       /* dm-bg-primary */
+  --color-dark-subtle: rgba(40, 39, 36, 0.15);
 
   /* Typography */
   --font-family-sans: var(--font-work-sans), -apple-system, sans-serif;
@@ -64,34 +65,34 @@ body {
 /* Dark mode */
 @media (prefers-color-scheme: dark) {
   :root {
-    --color-bg: #1C1917;
-    --color-surface: #26211E;
-    --color-surface-raised: #312A26;
-    --color-text-primary: #F0EBE6;
-    --color-text-secondary: #A89E98;
-    --color-text-muted: #6B5E57;
-    --color-border: #3A3330;
+    --color-bg: #282724;             /* dm-bg-primary */
+    --color-surface: #363530;        /* dm-bg-surface-primary */
+    --color-surface-raised: #504F49; /* dm-bg-surface-secondary */
+    --color-text-primary: #F0ECE6;       /* dm-text-primary */
+    --color-text-secondary: #E8E6DC;     /* lm-bg-surface-secondary */
+    --color-text-muted: #9E9C94;         /* dm-text-muted */
+    --color-border: #504F49;             /* dm-bg-surface-secondary */
   }
 }
 
 .dark {
-  --color-bg: #1C1917;
-  --color-surface: #26211E;
-  --color-surface-raised: #312A26;
-  --color-text-primary: #F0EBE6;
-  --color-text-secondary: #A89E98;
-  --color-text-muted: #6B5E57;
-  --color-border: #3A3330;
+  --color-bg: #282724;
+  --color-surface: #363530;
+  --color-surface-raised: #504F49;
+  --color-text-primary: #F0ECE6;
+  --color-text-secondary: #E8E6DC;
+  --color-text-muted: #9E9C94;
+  --color-border: #504F49;
 }
 
 .light {
-  --color-bg: #F9F7F5;
-  --color-surface: #F0ECE8;
-  --color-surface-raised: #FFFFFF;
-  --color-text-primary: #2C2118;
-  --color-text-secondary: #7A6B63;
-  --color-text-muted: #A89E98;
-  --color-border: #E0DAD5;
+  --color-bg: #FAF8F5;
+  --color-surface: #F0EEE6;
+  --color-surface-raised: #E8E6DC;
+  --color-text-primary: #363430;
+  --color-text-secondary: #504F49;
+  --color-text-muted: #76746C;
+  --color-border: #E8E6DC;
 }
 
 @keyframes fadeUp {

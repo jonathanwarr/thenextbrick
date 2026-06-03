@@ -48,8 +48,7 @@ export type Database = {
         Row: {
           author_id: string | null
           body_md: string | null
-          cover_image_url: string | null
-          cover_variant: string | null
+          category: string
           created_at: string
           dek: string | null
           featured: boolean
@@ -59,14 +58,14 @@ export type Database = {
           search: unknown
           slug: string
           status: string
+          the_brick: string | null
           title: string
           updated_at: string
         }
         Insert: {
           author_id?: string | null
           body_md?: string | null
-          cover_image_url?: string | null
-          cover_variant?: string | null
+          category?: string
           created_at?: string
           dek?: string | null
           featured?: boolean
@@ -76,14 +75,14 @@ export type Database = {
           search?: unknown
           slug: string
           status?: string
+          the_brick?: string | null
           title: string
           updated_at?: string
         }
         Update: {
           author_id?: string | null
           body_md?: string | null
-          cover_image_url?: string | null
-          cover_variant?: string | null
+          category?: string
           created_at?: string
           dek?: string | null
           featured?: boolean
@@ -93,6 +92,7 @@ export type Database = {
           search?: unknown
           slug?: string
           status?: string
+          the_brick?: string | null
           title?: string
           updated_at?: string
         }
