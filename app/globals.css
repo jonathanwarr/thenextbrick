@@ -45,6 +45,10 @@
 
 html {
   scroll-behavior: smooth;
+  /* Never allow horizontal scroll. `clip` (not `hidden`) prevents the page
+     from becoming a horizontal scroll container, so the sticky navbar keeps
+     working. Anything that would overflow sideways is clipped instead. */
+  overflow-x: clip;
 }
 
 body {
@@ -53,6 +57,19 @@ body {
   font-family: var(--font-family-sans);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  overflow-x: clip;
+}
+
+/* iOS Safari auto-zooms when you focus any form field whose font-size is
+   below 16px — that zoom then throws off placement and introduces horizontal
+   scrolling. Force 16px on touch devices (pointer: coarse) so focusing an
+   input never triggers a zoom. Desktop keeps its smaller, denser inputs. */
+@media (pointer: coarse) {
+  input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]),
+  textarea,
+  select {
+    font-size: 16px !important;
+  }
 }
 
 @layer base {
