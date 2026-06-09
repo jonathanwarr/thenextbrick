@@ -22,7 +22,6 @@ export type PostDetail = PostListItem & {
 export const KNOWN_CATEGORIES: readonly Category[] = [
   "foundations",
   "playbooks",
-  "signals",
   "essays",
 ];
 
