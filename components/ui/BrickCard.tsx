@@ -109,11 +109,12 @@ export default function BrickCard({
             </p>
           )}
 
-          {/* The Brick — value prop, fills the featured card. Bows out in the
-              snuggest locked band where it can't fit without cropping. */}
+          {/* The Brick — value prop, sized to its content so spare card
+              height becomes negative space instead of inflating the box.
+              Bows out in the snuggest locked band where it can't fit. */}
           {theBrick && (
             <div
-              className="flex-1 flex flex-col justify-center gap-2.5 rounded-lg px-5 py-4 lock-snug:hidden"
+              className="flex flex-col gap-2.5 rounded-lg px-5 py-4 lock-snug:hidden"
               style={{
                 backgroundColor: "var(--color-bg)",
                 borderLeft: `3px solid ${accentColor}`,
@@ -134,29 +135,32 @@ export default function BrickCard({
             </div>
           )}
 
-          {/* Tags */}
-          {tags.length > 0 && (
-            <div className="flex flex-wrap gap-1.5">
-              {tags.map((tag) => (
-                <span
-                  key={tag}
-                  className="text-xs px-2 py-0.5 rounded-full font-medium"
-                  style={{ backgroundColor: "var(--color-border)", color: "var(--color-text-secondary)" }}
-                >
-                  #{tag}
-                </span>
-              ))}
+          {/* Tags + CTA pinned to the card bottom as one group. Tags hide
+              across the whole tight band; in lock-trim the two-line Brick
+              box uses up the CTA's room too, so the group steps aside
+              rather than crop. */}
+          <div className="mt-auto flex flex-col gap-3 pt-1 lock-trim:hidden">
+            {tags.length > 0 && (
+              <div className="flex flex-wrap gap-1.5 lock-tight:hidden">
+                {tags.map((tag) => (
+                  <span
+                    key={tag}
+                    className="text-xs px-2 py-0.5 rounded-full font-medium"
+                    style={{ backgroundColor: "var(--color-border)", color: "var(--color-text-secondary)" }}
+                  >
+                    #{tag}
+                  </span>
+                ))}
+              </div>
+            )}
+            <div>
+              <span
+                className="text-sm font-semibold transition-opacity group-hover:opacity-70"
+                style={{ color: "var(--color-text-primary)" }}
+              >
+                Read article →
+              </span>
             </div>
-          )}
-
-          {/* CTA */}
-          <div className="mt-auto pt-1">
-            <span
-              className="text-sm font-semibold transition-opacity group-hover:opacity-70"
-              style={{ color: "var(--color-text-primary)" }}
-            >
-              Read article →
-            </span>
           </div>
         </div>
       </Link>

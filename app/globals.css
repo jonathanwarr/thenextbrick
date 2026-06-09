@@ -77,16 +77,25 @@
    below 50rem the home article cards can no longer fit their titles. */
 @custom-variant lock (@media (min-width: 48rem) and (min-height: 50rem));
 
-/* The low end of the locked range (800–992px tall): everything fits, but
-   only if optional card content steps aside. Used to trim excerpts and
-   clamp "The Brick" text so cards truncate at line boundaries instead of
-   cropping text mid-glyph against the card edge. */
-@custom-variant lock-tight (@media (min-width: 48rem) and (min-height: 50rem) and (max-height: 62rem));
+/* The low end of the locked range (800–1104px tall): everything fits, but
+   only if optional card content steps aside — standard-card excerpts and
+   featured tags hide, "The Brick" clamps to two lines — so cards truncate
+   at line boundaries instead of cropping text mid-glyph at the card edge.
+   Boundaries below were measured, not derived: the hero's svh clamps all
+   cap out by ~1000px, so card space grows slowly until then. */
+@custom-variant lock-tight (@media (min-width: 48rem) and (min-height: 50rem) and (max-height: 69rem));
 
-/* The very bottom of the locked range (800–928px tall): not even a
-   two-line "The Brick" fits the featured card, so the box bows out
-   entirely rather than rendering as a cropped fragment. */
-@custom-variant lock-snug (@media (min-width: 48rem) and (min-height: 50rem) and (max-height: 58rem));
+/* Upper half of the tight band (1000–1104px tall): the featured card fits
+   a two-line "The Brick" but not the CTA row below it — the CTA steps
+   aside (the whole card is a link). Below 1000px the box itself is hidden
+   (lock-snug) and the CTA fits again, so this band starts where lock-snug
+   ends. */
+@custom-variant lock-trim (@media (min-width: 48rem) and (min-height: 62.5rem) and (max-height: 69rem));
+
+/* The bottom of the locked range (800–1000px tall): not even a two-line
+   "The Brick" fits the featured card, so the box bows out entirely rather
+   than rendering as a cropped fragment. */
+@custom-variant lock-snug (@media (min-width: 48rem) and (min-height: 50rem) and (max-height: 62.5rem));
 
 * {
   box-sizing: border-box;
