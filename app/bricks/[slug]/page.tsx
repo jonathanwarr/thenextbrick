@@ -90,7 +90,7 @@ export default async function PostPage({ params }: { params: PostParams }) {
       />
       <Navbar />
 
-      <main className="flex-1 max-w-3xl mx-auto w-full px-6 pt-16 pb-12">
+      <main className="flex-1 max-w-3xl mx-auto w-full px-6 pt-section-y pb-section-b">
         <Link
           href="/bricks"
           className="text-sm mb-8 inline-block hover:opacity-70 transition-opacity"
@@ -123,7 +123,7 @@ export default async function PostPage({ params }: { params: PostParams }) {
         </div>
 
         <h1
-          className="text-3xl sm:text-4xl md:text-5xl font-medium leading-tight mb-8"
+          className="text-article font-medium mb-8"
           style={{ fontFamily: "var(--font-family-serif)" }}
         >
           {post.title}

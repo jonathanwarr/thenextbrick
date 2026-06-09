@@ -33,7 +33,7 @@ export default function SubscribeMessage({
             {eyebrow}
           </p>
           <h1
-            className="text-4xl font-medium mb-3"
+            className="text-title font-medium mb-3"
             style={{ fontFamily: "var(--font-family-serif)" }}
           >
             {title}

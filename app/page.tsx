@@ -40,7 +40,7 @@ export default async function HomePage() {
   const recent = await listPublishedPosts({ limit: 3 });
 
   return (
-    <div className="flex flex-col min-h-screen md:h-screen md:overflow-hidden">
+    <div className="flex flex-col min-h-screen lock:h-dvh lock:overflow-hidden">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: jsonLdString(homeJsonLd) }}
@@ -50,10 +50,10 @@ export default async function HomePage() {
       <main className="flex-1 flex flex-col min-h-0">
 
         {/* Hero */}
-        <section className="flex flex-col items-center text-center px-6 py-12 md:flex-1 md:justify-center md:py-0 md:pb-20">
+        <section className="flex flex-col items-center text-center px-6 py-12 lock:flex-1 lock:justify-center lock:pt-hero-top lock:pb-hero-bottom">
           {/* Editorial rule */}
           <div
-            className="flex items-center gap-2 sm:gap-4 w-full max-w-[640px] mt-0 md:-mt-6 mb-11"
+            className="flex items-center gap-2 sm:gap-4 w-full max-w-[640px] mb-hero-gap"
             style={{ animation: "fadeUp 0.5s ease both", animationDelay: "0ms" }}
           >
             <div className="hidden sm:block h-px flex-1" style={{ backgroundColor: "var(--color-border)" }} />
@@ -65,8 +65,6 @@ export default async function HomePage() {
               <span className="mx-1.5 sm:mx-2.5 opacity-50">·</span>
               Playbooks
               <span className="mx-1.5 sm:mx-2.5 opacity-50">·</span>
-              Signals
-              <span className="mx-1.5 sm:mx-2.5 opacity-50">·</span>
               Essays
             </span>
             <div className="hidden sm:block h-px flex-1" style={{ backgroundColor: "var(--color-border)" }} />
@@ -74,7 +72,7 @@ export default async function HomePage() {
 
           {/* Headline */}
           <h1
-            className="text-4xl md:text-5xl font-bold leading-none mb-2"
+            className="text-display font-bold mb-2"
             style={{
               animation: "fadeUp 0.5s ease both",
               animationDelay: "80ms",
@@ -86,7 +84,7 @@ export default async function HomePage() {
 
           {/* Subtitle */}
           <p
-            className="text-lg sm:text-xl mb-14 font-family-serif"
+            className="text-subtitle mb-hero-sub font-family-serif"
             style={{
               color: "var(--color-text-secondary)",
               letterSpacing: "var(--tracking-subtitle)",
@@ -111,7 +109,7 @@ export default async function HomePage() {
         </section>
 
         {/* Articles */}
-        <section className="w-full max-w-7xl mx-auto px-6 flex flex-col pt-5 pb-10 md:flex-1 md:pb-6 md:min-h-0">
+        <section className="w-full max-w-7xl mx-auto px-6 lg:px-8 flex flex-col pt-5 pb-10 lock:flex-1 lock:pb-6 lock:min-h-0">
 
           {/* Section header */}
           <div className="flex items-center gap-3 mb-4">
@@ -133,7 +131,7 @@ export default async function HomePage() {
 
           {/* Article grid: featured (left, row-span-2) + 2 standard stacked (right) */}
           {recent.length > 0 ? (
-            <div className="grid grid-cols-1 gap-3 md:[grid-template-columns:2fr_1fr] md:[grid-template-rows:1fr_1fr] md:[flex:1_1_0] md:min-h-0">
+            <div className="grid grid-cols-1 gap-3 lg:gap-4 md:[grid-template-columns:2fr_1fr] md:[grid-template-rows:1fr_1fr] lock:[flex:1_1_0] lock:min-h-0">
               {recent[0] && (
                 <BrickCard
                   slug={recent[0].slug}

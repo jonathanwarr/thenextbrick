@@ -37,7 +37,56 @@
   /* Typographic rhythm */
   --tracking-label: 0.1em;
   --tracking-subtitle: 0.015em;
+
+  /* Fluid type scale — min = current mobile size, max ≈ 1.15–1.25x the old
+     desktop size so large monitors gain presence without the layout reflowing.
+     Eyebrow/label micro-type (10–11px) intentionally stays fixed: scaling it
+     would weaken its contrast against these display sizes. */
+  --text-display: clamp(2.25rem, 1.95rem + 1.35vw, 3.5rem);        /* home h1 */
+  --text-display--line-height: 1;
+  --text-display-lg: clamp(2.5rem, 2rem + 1.7vw, 4.25rem);         /* about h1 */
+  --text-display-lg--line-height: 1.05;
+  --text-article: clamp(2rem, 1.5rem + 1.8vw, 3.25rem);            /* article h1 */
+  --text-article--line-height: 1.15;
+  --text-title: clamp(1.875rem, 1.6rem + 1vw, 2.625rem);           /* page titles */
+  --text-title--line-height: 1.15;
+  --text-subtitle: clamp(1.125rem, 1rem + 0.6vw, 1.5rem);          /* home subtitle */
+  --text-subtitle--line-height: 1.6;
+  --text-card-feature: clamp(1.25rem, 1.05rem + 0.7vw, 1.75rem);   /* featured card title */
+  --text-card-feature--line-height: 1.35;
+
+  /* Fluid vertical rhythm.
+     svh-based tokens scale with viewport HEIGHT — used inside the viewport
+     lock so a short laptop compresses gracefully while a tall monitor keeps
+     today's generous negative space. */
+  --spacing-hero-top: clamp(2.5rem, 9svh, 5.5rem);    /* navbar → hero eyebrow */
+  --spacing-hero-gap: clamp(1.75rem, 5svh, 3rem);     /* eyebrow → headline */
+  --spacing-hero-sub: clamp(2rem, 6svh, 3.75rem);     /* subtitle → search */
+  --spacing-hero-bottom: clamp(2rem, 8svh, 5rem);     /* hero → articles */
+  --spacing-page-top: clamp(2rem, 5svh, 4rem);        /* locked-page top rhythm */
+
+  /* rem/vw-based tokens for normally-scrolling pages. */
+  --spacing-section-y: clamp(2.5rem, 2rem + 2vw, 4.5rem);  /* page top rhythm */
+  --spacing-section-b: clamp(2.5rem, 2rem + 1.5vw, 4rem);  /* page bottom rhythm */
 }
+
+/* Viewport lock: engage the no-scroll, single-viewport desktop layout only
+   when the screen is BOTH wide enough (md) and tall enough to fit it
+   comfortably. Short-but-wide viewports (small laptops, ~<800px tall) fall
+   back to a normal scrolling document instead of squishing the hero —
+   below 50rem the home article cards can no longer fit their titles. */
+@custom-variant lock (@media (min-width: 48rem) and (min-height: 50rem));
+
+/* The low end of the locked range (800–992px tall): everything fits, but
+   only if optional card content steps aside. Used to trim excerpts and
+   clamp "The Brick" text so cards truncate at line boundaries instead of
+   cropping text mid-glyph against the card edge. */
+@custom-variant lock-tight (@media (min-width: 48rem) and (min-height: 50rem) and (max-height: 62rem));
+
+/* The very bottom of the locked range (800–928px tall): not even a
+   two-line "The Brick" fits the featured card, so the box bows out
+   entirely rather than rendering as a cropped fragment. */
+@custom-variant lock-snug (@media (min-width: 48rem) and (min-height: 50rem) and (max-height: 58rem));
 
 * {
   box-sizing: border-box;

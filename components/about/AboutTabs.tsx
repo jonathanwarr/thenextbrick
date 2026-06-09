@@ -13,7 +13,7 @@ export default function AboutTabs({ tabs }: { tabs: Tab[] }) {
   const active = tabs.find((t) => t.id === activeId) ?? tabs[0];
 
   return (
-    <div className="flex flex-col md:min-h-0 md:flex-1">
+    <div className="flex flex-col lock:min-h-0 lock:flex-1">
       {/* Tab strip */}
       <div
         role="tablist"
@@ -59,7 +59,7 @@ export default function AboutTabs({ tabs }: { tabs: Tab[] }) {
         role="tabpanel"
         id={`panel-${active.id}`}
         aria-labelledby={`tab-${active.id}`}
-        className="md:flex-1 md:min-h-0 overflow-visible md:overflow-y-auto pt-6 sm:pt-10 pb-2"
+        className="lock:flex-1 lock:min-h-0 overflow-visible lock:overflow-y-auto pt-6 sm:pt-10 pb-2"
         style={{ animation: "fadeUp 0.35s ease both" }}
       >
         <div className="max-w-4xl mx-auto">{active.content}</div>

@@ -12,7 +12,7 @@ import type { Metadata } from "next";
 export const metadata: Metadata = {
   title: "Articles",
   description:
-    "Every brick, searchable — Foundations, Playbooks, Signals, and Essays on putting Claude to work. Filter by topic or search by keyword.",
+    "Every brick, searchable — Foundations, Playbooks, and Essays on putting Claude to work. Filter by topic or search by keyword.",
   alternates: { canonical: "/bricks" },
 };
 
@@ -123,7 +123,7 @@ export default async function BricksPage({
     <div className="flex flex-col min-h-screen">
       <Navbar />
 
-      <main className="flex-1 max-w-7xl mx-auto w-full px-6 pt-12 pb-0">
+      <main className="flex-1 max-w-7xl mx-auto w-full px-6 lg:px-8 pt-section-y pb-section-b">
         <p
           className="text-[10px] font-semibold uppercase tracking-widest mb-3 flex items-center gap-2"
           style={{ color: "var(--color-text-muted)" }}
@@ -137,7 +137,7 @@ export default async function BricksPage({
           </span>
         </p>
 
-        <h1 className="text-3xl sm:text-4xl font-medium mb-2">Every Brick, Searchable.</h1>
+        <h1 className="text-title font-medium mb-2">Every Brick, Searchable.</h1>
         <p className="text-sm mb-8" style={{ color: "var(--color-text-secondary)" }}>
           Search for any content by title, tag, or keyword.
         </p>
@@ -146,7 +146,7 @@ export default async function BricksPage({
           <SearchBar size="page" initialQuery={searchQuery ?? ""} />
         </div>
 
-        <div className="mb-16">
+        <div className="mb-12 lg:mb-16">
           <span className="block text-[10px] font-semibold uppercase tracking-widest mb-2" style={{ color: "var(--color-text-muted)" }}>
             Filter by tag
           </span>
@@ -179,7 +179,7 @@ export default async function BricksPage({
             </p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 lg:gap-5">
             {featuredArticle && <FeaturedCard article={featuredArticle} />}
             {gridArticles.map((article) => (
               <BrickCard

@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-export type Category = "foundations" | "playbooks" | "signals" | "essays";
+export type Category = "foundations" | "playbooks" | "essays";
 
 export interface BrickCardProps {
   title: string;
@@ -17,14 +17,12 @@ export interface BrickCardProps {
 export const categoryColors: Record<Category, string> = {
   foundations: "var(--color-primary)",
   playbooks: "var(--color-secondary)",
-  signals: "var(--color-accent)",
   essays: "var(--color-primary)",
 };
 
 export const categoryLabels: Record<Category, string> = {
   foundations: "Foundations",
   playbooks: "Playbooks",
-  signals: "Signals",
   essays: "Essays",
 };
 
@@ -41,15 +39,6 @@ export function CategoryIcon({ category }: { category: Category }) {
       <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
         <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
         <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
-      </svg>
-    );
-  }
-  if (category === "signals") {
-    return (
-      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M4 11a9 9 0 0 1 9 9" />
-        <path d="M4 4a16 16 0 0 1 16 16" />
-        <circle cx="5" cy="19" r="1" />
       </svg>
     );
   }
@@ -85,7 +74,7 @@ export default function BrickCard({
           borderTop: `4px solid ${accentColor}`,
         }}
       >
-        <div className="flex flex-col gap-3 p-5 flex-1">
+        <div className="flex flex-col gap-3 p-5 lg:p-6 flex-1">
           {/* Category badge + date */}
           <div className="flex items-center gap-3">
             <span
@@ -105,7 +94,7 @@ export default function BrickCard({
 
           {/* Title */}
           <h3
-            className="text-xl md:text-2xl font-bold leading-snug group-hover:opacity-70 transition-opacity"
+            className="text-card-feature font-bold group-hover:opacity-70 transition-opacity"
           >
             {title}
           </h3>
@@ -120,10 +109,11 @@ export default function BrickCard({
             </p>
           )}
 
-          {/* The Brick — value prop, fills the featured card */}
+          {/* The Brick — value prop, fills the featured card. Bows out in the
+              snuggest locked band where it can't fit without cropping. */}
           {theBrick && (
             <div
-              className="flex-1 flex flex-col justify-center gap-2.5 rounded-lg px-5 py-4"
+              className="flex-1 flex flex-col justify-center gap-2.5 rounded-lg px-5 py-4 lock-snug:hidden"
               style={{
                 backgroundColor: "var(--color-bg)",
                 borderLeft: `3px solid ${accentColor}`,
@@ -136,7 +126,7 @@ export default function BrickCard({
                 The Brick
               </span>
               <p
-                className="text-xl leading-relaxed line-clamp-6 font-family-serif"
+                className="text-xl leading-relaxed line-clamp-6 lock-tight:line-clamp-2 font-family-serif"
                 style={{ color: "var(--color-text-primary)" }}
               >
                 {theBrick}
@@ -184,7 +174,7 @@ export default function BrickCard({
         borderTop: `3px solid ${accentColor}`,
       }}
     >
-      <div className="flex flex-col gap-2 p-4 flex-1">
+      <div className="flex flex-col gap-2 p-4 lg:p-5 flex-1">
         {/* Category + date */}
         <div className="flex items-center justify-between">
           <span
@@ -207,10 +197,11 @@ export default function BrickCard({
           {title}
         </p>
 
-        {/* Excerpt */}
+        {/* Excerpt — steps aside in the tight locked band so the card
+            truncates at a line boundary instead of cropping mid-glyph */}
         {excerpt && (
           <p
-            className="text-sm leading-relaxed line-clamp-2 font-family-serif"
+            className="text-sm leading-relaxed line-clamp-2 lock-tight:hidden font-family-serif"
             style={{ color: "var(--color-text-secondary)" }}
           >
             {excerpt}

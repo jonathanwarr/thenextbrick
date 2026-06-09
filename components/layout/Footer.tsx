@@ -19,7 +19,7 @@ export default function Footer() {
       className="border-t"
       style={{ borderColor: "var(--color-border)", backgroundColor: "var(--color-bg)" }}
     >
-      <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+      <div className="max-w-7xl mx-auto px-6 lg:px-8 py-4 flex items-center justify-between">
         <span className="text-xs" style={{ color: "var(--color-text-muted)" }}>
           © {new Date().getFullYear()} The Next Brick
         </span>

@@ -10,7 +10,7 @@ interface SearchBarProps {
   size?: "hero" | "page";
 }
 
-type Category = "foundations" | "playbooks" | "signals" | "essays";
+type Category = "foundations" | "playbooks" | "essays";
 
 type ArticleResult = {
   slug: string;
@@ -62,13 +62,6 @@ function PlaybooksIcon() {
     </svg>
   );
 }
-function SignalsIcon() {
-  return (
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M4 11a9 9 0 0 1 9 9" /><path d="M4 4a16 16 0 0 1 16 16" /><circle cx="5" cy="19" r="1" />
-    </svg>
-  );
-}
 function EssaysIcon() {
   return (
     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -80,14 +73,12 @@ function EssaysIcon() {
 const categoryIcon: Record<Category, React.ReactNode> = {
   foundations: <FoundationsIcon />,
   playbooks: <PlaybooksIcon />,
-  signals: <SignalsIcon />,
   essays: <EssaysIcon />,
 };
 
 const categoryLabel: Record<Category, string> = {
   foundations: "Foundations",
   playbooks: "Playbooks",
-  signals: "Signals",
   essays: "Essays",
 };
 
@@ -215,13 +206,14 @@ export default function SearchBar({ initialQuery = "", size = "hero" }: SearchBa
   return (
     <div ref={containerRef} className="relative w-full">
       <div
-        className="flex items-center gap-3 rounded-xl border transition-all"
+        className={`flex items-center gap-3 rounded-xl border transition-all ${
+          isHero ? "px-7 py-4 lock:py-5.5" : "px-4 py-3"
+        }`}
         style={{
           backgroundColor: "var(--color-surface-raised)",
           borderColor: isFocused ? "rgba(217,172,140,0.6)" : "var(--color-border)",
           outline: isFocused ? "1.5px solid rgba(217,172,140,0.6)" : "none",
           outlineOffset: "-1.5px",
-          padding: isHero ? "22px 28px" : "12px 16px",
         }}
       >
         <span style={{ color: "var(--color-text-muted)" }}>

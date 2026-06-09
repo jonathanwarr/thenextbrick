@@ -15,8 +15,8 @@ function AboutMeContent() {
   return (
     <div className="post-body">
       <p>
-        12 years in SaaS and over 700 implementations has taught me something important about
-        technology adoption. The people who have the most to gain are those who know the most about
+        I&apos;ve spent 12 years in SaaS with over 700 implementations, and if it has taught me anything about
+        technology adoption, it&apos;s that the people who have the most to gain are those who know the most about
         their craft.
       </p>
 
@@ -31,7 +31,7 @@ function AboutMeContent() {
       <p>
         To date, I&apos;ve invested over 3,000 hours in this pursuit. I&apos;ve built a veterinary
         marketplace platform as a non-engineer, have consulted on technology adoption and AI
-        coaching, built a number of internal tools and workflows that I use daily.
+        coaching, and have built a number of internal tools and workflows that I use daily.
       </p>
 
       <p>
@@ -42,16 +42,6 @@ function AboutMeContent() {
 
       <PullQuote>That&apos;s the whole idea behind The Next Brick.</PullQuote>
 
-      <p>
-        AI content has a real problem. It chases complexity. It manufactures urgency. It leaves
-        professionals feeling like they&apos;re already behind, and that the only path forward is to
-        move faster and absorb more.
-      </p>
-
-      <p>
-        The Next Brick exists for professionals who already know their craft. One concept. One
-        application. One brick at a time.
-      </p>
     </div>
   );
 }
@@ -61,71 +51,24 @@ function AboutTNBContent() {
     <div className="post-body">
       <h3 style={{ marginTop: 0 }}>What It Is</h3>
       <p>
-        The Next Brick is an AI Enablement project to help professionals adopt Claude and build
-        skills, one step at a time. It&apos;s a collection of practical articles for non-technical
-        professionals to learn a concept and take away examples to help them build the skill in
-        their work environment.
+        The Next Brick is an enablement project to help professionals adopt Claude. It&apos;s a collection of articles, playbooks, and essays
+        to provide foundational knowledge, practical application, and strategic thinking for professionals who want to use Claude in their work. 
+      
       </p>
 
       <h3>What It Isn&apos;t</h3>
+    
       <p>
-        It&apos;s not tips-and-tricks and it&apos;s not urgent. No &ldquo;five prompts every
-        professional must know,&rdquo; no listicles, no urgency theatre, and no mastery in 18
-        minutes. Every issue is one idea, taken seriously, and provided in context.
-      </p>
-      <p>
-        It&apos;s not generic AI coverage and it&apos;s not punditry. I write about Claude,
-        specifically, because spreading across five tools is how you stay a beginner in all of them.
-        Every piece is anchored in something I&apos;ve built or taught.
+        It&apos;s not generic AI coverage and it&apos;s not punditry. You will not master AI in 18 minutes and you won&apos;t secure 87 calls a week. 
+        Every piece is anchored in something I&apos;ve built, taught or applied to my own work. The goal is to help you build your own bricks, not just hand you mine.
       </p>
 
       <h3>Who It&apos;s For</h3>
       <p>
-        The Next Brick exists for the professional who already has the craft. The CX manager that runs an
+        This content isfor the professional who already has the craft. The CX Director that runs an
         excellent team. The operations lead who&apos;s building workflows. The project manager that
         delivers. These readers don&apos;t need AI to replace their judgment. They need it to apply
         their knowledge and make the tool useful.
-      </p>
-      <p>I&apos;m here to help that professional get started.</p>
-    </div>
-  );
-}
-
-function WhyClaudeContent() {
-  return (
-    <div className="post-body">
-      <p>
-        The question I get most: &ldquo;Why focus only on Claude? You&apos;re missing out on a huge
-        market.&rdquo;
-      </p>
-
-      <p>
-        I&apos;ve been using LLMs since early 2023. Started on ChatGPT. Dabbled with Claude 2.0. Ran
-        both Pro accounts through 2024, chasing whichever model felt strongest that week. Claude
-        for writing and professional communications, ChatGPT for everything else.
-      </p>
-
-      <p>
-        By 2025, I&apos;d quietly stopped opening ChatGPT. The reason was simple: my baseline
-        instructions. I work best when information comes incrementally, step-by-step. I&apos;d told
-        both models the same thing, and even given them an analogy.
-      </p>
-
-      <PullQuote>
-        When you build a brick wall, you don&apos;t put down five or six at a time. You build the
-        wall, one brick at a time.
-      </PullQuote>
-
-      <p>
-        Claude followed it. ChatGPT didn&apos;t. The only thing that kept me on both was memory
-        &mdash; Claude didn&apos;t have it yet. In August 2025, that changed. I went Max-tier and
-        never looked back.
-      </p>
-
-      <p>
-        What&apos;s kept me there is direction. While ChatGPT chased Sora 2 and consumer-friendly
-        features, Claude doubled down on Opus and tools built for professional work. That&apos;s the
-        platform I want to teach on.
       </p>
     </div>
   );
@@ -238,7 +181,7 @@ function ResumeContent() {
             <span style={body}>
               {" "}
               — This publication. Articles for professionals working toward mastery with Claude,
-              across four banks: Foundations, Builds, Observations, and Essays.
+              across three banks: Foundations, Playbooks, and Essays.
             </span>{" "}
             <a
               href="https://www.thenextbrick.ai"
@@ -316,16 +259,15 @@ function PullQuote({ children }: { children: React.ReactNode }) {
 const tabs = [
   { id: "about-me", label: "About Me", content: <AboutMeContent /> },
   { id: "about-tnb", label: "About The Next Brick", content: <AboutTNBContent /> },
-  { id: "why-claude", label: "Why Claude Focused", content: <WhyClaudeContent /> },
   { id: "resume", label: "My Resume", content: <ResumeContent /> },
 ];
 
 export default function AboutPage() {
   return (
-    <div className="flex flex-col min-h-screen md:h-screen md:overflow-hidden">
+    <div className="flex flex-col min-h-screen lock:h-dvh lock:overflow-hidden">
       <Navbar />
 
-      <main className="flex-1 max-w-7xl mx-auto w-full px-6 pt-8 sm:pt-12 flex flex-col md:min-h-0">
+      <main className="flex-1 max-w-7xl mx-auto w-full px-6 lg:px-8 pt-page-top pb-8 lock:pb-0 flex flex-col lock:min-h-0">
         {/* Editorial rule eyebrow */}
         <div
           className="flex items-center gap-4 mb-5 shrink-0"
@@ -351,7 +293,7 @@ export default function AboutPage() {
             style={{ animation: "fadeUp 0.5s ease both", animationDelay: "80ms" }}
           >
             <h1
-              className="text-4xl sm:text-5xl md:text-[3.5rem] font-medium leading-[1.05] tracking-tight"
+              className="text-display-lg font-medium tracking-tight"
               style={{
                 fontFamily: "var(--font-family-serif)",
                 color: "var(--color-primary)",

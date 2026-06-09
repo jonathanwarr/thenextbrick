@@ -31,7 +31,7 @@ export default async function AdminDashboardPage() {
         >
           Overview
         </p>
-        <h1 className="text-3xl sm:text-4xl font-medium" style={{ fontFamily: "var(--font-family-serif)" }}>
+        <h1 className="text-title font-medium" style={{ fontFamily: "var(--font-family-serif)" }}>
           Dashboard
         </h1>
       </div>
