@@ -33,13 +33,18 @@ function FeaturedCard({ article }: { article: PostListItem }) {
         borderTop: `3px solid ${accentColor}`,
       }}
     >
-      <div className="w-full h-24 sm:h-auto sm:w-1/4 shrink-0 relative overflow-hidden">
-        <div className="absolute inset-0" style={{ backgroundColor: "var(--color-secondary)", opacity: 0.7 }} />
+      <div
+        className="w-full h-28 sm:h-auto sm:w-1/4 shrink-0 relative overflow-hidden flex items-center justify-center"
+        style={{ backgroundColor: "var(--color-primary)" }}
+      >
         <span
           className="absolute top-3 left-3 z-10 text-[10px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-full"
-          style={{ backgroundColor: "var(--color-primary)", color: "var(--color-dark)" }}
+          style={{ backgroundColor: "var(--color-dark)", color: "var(--color-tag-text)" }}
         >
           Featured
+        </span>
+        <span style={{ color: "var(--color-dark)" }} aria-hidden="true">
+          <CategoryIcon category={article.category} size={48} />
         </span>
       </div>
 
