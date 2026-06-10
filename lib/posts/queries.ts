@@ -175,7 +175,7 @@ export async function listPopularTags(limit = 8): Promise<string[]> {
 }
 
 /**
- * Public, grouped tag taxonomy for the Articles-page filter. Uses the anon
+ * Public, grouped tag taxonomy for the Library-page filter. Uses the anon
  * client — `tag_groups` and `tags` are both RLS-readable by anon — so this is
  * safe to call from public server components (unlike the admin loader, which
  * uses the service client).

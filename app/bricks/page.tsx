@@ -10,7 +10,7 @@ import type { PostListItem } from "@/lib/posts/types";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Articles",
+  title: "Library",
   description:
     "Every brick, searchable — Articles, Playbooks, and Essays on putting Claude to work. Filter by topic or search by keyword.",
   alternates: { canonical: "/bricks" },
@@ -202,7 +202,7 @@ export default async function BricksPage({
         {totalPages > 1 && (
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mt-12 pt-6 border-t" style={{ borderColor: "var(--color-border)" }}>
             <p className="text-xs" style={{ color: "var(--color-text-muted)" }}>
-              Page {page} of {totalPages} | {totalPosts} Articles
+              Page {page} of {totalPages} | {totalPosts} Bricks
             </p>
             <div className="flex items-center gap-1">
               {page > 1 && (

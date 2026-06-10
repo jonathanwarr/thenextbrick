@@ -21,7 +21,7 @@ const UNGROUPED_ID = "__ungrouped__";
 
 /**
  * Public, browse-and-filter version of the admin TagPicker: pick a category to
- * reveal its tags, then select one or more tags to filter the Articles list.
+ * reveal its tags, then select one or more tags to filter the Library list.
  * Selection is driven through repeated `?tag=` URL params so it stays
  * server-rendered and shareable. Multiple tags match by union (any selected
  * tag), per the listPublishedPosts backend.
@@ -105,7 +105,7 @@ export default function TagFilter({
       <div className="flex flex-wrap items-center gap-1.5 min-h-[28px]">
         {activeTags.length === 0 ? (
           <span className="text-xs italic" style={{ color: "var(--color-text-muted)" }}>
-            Showing all articles.
+            Showing all bricks.
           </span>
         ) : (
           <>

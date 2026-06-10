@@ -180,7 +180,7 @@ export default async function HomePage() {
                 justifyContent: "center",
               }}
             >
-              <p className="font-medium mb-1">No articles yet.</p>
+              <p className="font-medium mb-1">No bricks yet.</p>
               <p className="text-sm" style={{ color: "var(--color-text-secondary)" }}>
                 The first brick lands soon.
               </p>

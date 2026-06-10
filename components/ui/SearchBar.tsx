@@ -226,7 +226,7 @@ export default function SearchBar({ initialQuery = "", size = "hero" }: SearchBa
           onChange={(e) => setQuery(e.target.value)}
           onKeyDown={handleKeyDown}
           onFocus={() => setIsFocused(true)}
-          placeholder="Search articles, tags or keywords"
+          placeholder="Search the library, tags or keywords"
           className="flex-1 bg-transparent text-sm outline-none"
           style={{ color: "var(--color-text-primary)" }}
           aria-label="Search"

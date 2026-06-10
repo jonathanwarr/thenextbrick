@@ -64,7 +64,7 @@ function SunIcon() {
 
 const navLinks = [
   { href: "/", label: "Home" },
-  { href: "/bricks", label: "Articles" },
+  { href: "/bricks", label: "Library" },
   { href: "/about", label: "About" },
 ];
 
