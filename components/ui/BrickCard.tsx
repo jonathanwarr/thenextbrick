@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-export type Category = "foundations" | "playbooks" | "essays";
+export type Category = "articles" | "playbooks" | "essays";
 
 export interface BrickCardProps {
   title: string;
@@ -15,19 +15,19 @@ export interface BrickCardProps {
 }
 
 export const categoryColors: Record<Category, string> = {
-  foundations: "var(--color-primary)",
+  articles: "var(--color-primary)",
   playbooks: "var(--color-secondary)",
   essays: "var(--color-primary)",
 };
 
 export const categoryLabels: Record<Category, string> = {
-  foundations: "Foundations",
+  articles: "Articles",
   playbooks: "Playbooks",
   essays: "Essays",
 };
 
 export function CategoryIcon({ category }: { category: Category }) {
-  if (category === "foundations") {
+  if (category === "articles") {
     return (
       <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
         <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />

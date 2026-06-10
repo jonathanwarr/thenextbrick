@@ -53,7 +53,7 @@ export default async function HomePage() {
         <section className="flex flex-col items-center text-center px-6 py-12 lock:flex-1 lock:justify-center lock:pt-hero-top lock:pb-hero-bottom">
           {/* Editorial rule */}
           <div
-            className="flex items-center gap-2 sm:gap-4 w-full max-w-[640px] mb-hero-gap"
+            className="flex items-center justify-center gap-2 sm:gap-4 w-full max-w-[640px] mb-hero-gap"
             style={{ animation: "fadeUp 0.5s ease both", animationDelay: "0ms" }}
           >
             <div className="hidden sm:block h-px flex-1" style={{ backgroundColor: "var(--color-border)" }} />
@@ -61,7 +61,7 @@ export default async function HomePage() {
               className="text-[11px] font-bold tracking-[0.15em] uppercase text-center"
               style={{ color: "var(--color-text-muted)" }}
             >
-              Foundations
+              Articles
               <span className="mx-1.5 sm:mx-2.5 opacity-50">·</span>
               Playbooks
               <span className="mx-1.5 sm:mx-2.5 opacity-50">·</span>

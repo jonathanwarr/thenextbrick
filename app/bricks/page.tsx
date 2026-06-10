@@ -12,7 +12,7 @@ import type { Metadata } from "next";
 export const metadata: Metadata = {
   title: "Articles",
   description:
-    "Every brick, searchable — Foundations, Playbooks, and Essays on putting Claude to work. Filter by topic or search by keyword.",
+    "Every brick, searchable — Articles, Playbooks, and Essays on putting Claude to work. Filter by topic or search by keyword.",
   alternates: { canonical: "/bricks" },
 };
 

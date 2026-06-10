@@ -183,7 +183,7 @@ export default function PostForm({
         </Field>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <Field label="Type" hint="Foundations explain core ideas · Playbooks walk through building things · Essays go deep.">
+          <Field label="Type" hint="Articles provide foundational knowledge · Playbooks provide practical application · Essays provide strategic thinking.">
             <select
               name="category"
               defaultValue={values.category}

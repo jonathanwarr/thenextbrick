@@ -21,7 +21,7 @@ export default async function NewPostPage({
         dek: "",
         the_brick: "",
         body_md: "",
-        category: "foundations",
+        category: "articles",
         status: "draft",
         read_time_min: null,
         tags: [],

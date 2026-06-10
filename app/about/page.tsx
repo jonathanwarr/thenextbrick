@@ -181,7 +181,7 @@ function ResumeContent() {
             <span style={body}>
               {" "}
               — This publication. Articles for professionals working toward mastery with Claude,
-              across three banks: Foundations, Playbooks, and Essays.
+              across three banks: Articles, Playbooks, and Essays.
             </span>{" "}
             <a
               href="https://www.thenextbrick.ai"

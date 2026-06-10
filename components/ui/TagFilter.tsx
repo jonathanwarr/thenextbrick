@@ -88,6 +88,17 @@ export default function TagFilter({
     applyTags(Array.from(next));
   }
 
+  // Add-only (used by the mobile dropdown, which can't express removal).
+  // Removal there happens by tapping the × on a chip in the selected tray.
+  function addTag(slug: string) {
+    if (activeSet.has(slug)) return;
+    applyTags([...activeTags, slug]);
+  }
+
+  const groupsWithTags = orderedGroups.filter(
+    (g) => (tagsByGroup.get(g.id) ?? []).length > 0,
+  );
+
   return (
     <div className="space-y-3">
       {/* Selected tray */}
@@ -131,65 +142,97 @@ export default function TagFilter({
         )}
       </div>
 
-      {/* Category chips */}
-      <div
-        className="flex flex-wrap gap-1.5 pt-3 border-t"
-        style={{ borderColor: "var(--color-border)" }}
-      >
-        {orderedGroups.map((group) => {
-          const isOpen = expandedGroupId === group.id;
-          const groupTags = tagsByGroup.get(group.id) ?? [];
-          const selectedCount = groupTags.filter((t) => activeSet.has(t.slug)).length;
-          return (
-            <button
-              key={group.id}
-              type="button"
-              onClick={() => setExpandedGroupId(isOpen ? null : group.id)}
-              className="text-xs px-3 py-1 rounded-full font-medium border transition-colors cursor-pointer"
-              style={{
-                backgroundColor: isOpen ? "var(--color-primary)" : "var(--color-surface)",
-                color: isOpen ? "var(--color-text-primary)" : "var(--color-text-secondary)",
-                borderColor: "var(--color-border)",
-              }}
-            >
-              {group.name}
-              {selectedCount > 0 && (
-                <span className="ml-1.5 text-[10px] opacity-70">({selectedCount})</span>
-              )}
-            </button>
-          );
-        })}
+      {/* Mobile: a grouped native dropdown. The desktop chip browser is too
+          squished on phones, so tags are picked one at a time from a
+          category-grouped <select> and land in the tray above. */}
+      <div className="sm:hidden pt-3 border-t" style={{ borderColor: "var(--color-border)" }}>
+        <select
+          aria-label="Choose a tag"
+          value=""
+          onChange={(e) => {
+            if (e.target.value) addTag(e.target.value);
+          }}
+          className="w-full rounded-lg border px-3 py-2.5 text-sm cursor-pointer outline-none"
+          style={{
+            backgroundColor: "var(--color-surface)",
+            borderColor: "var(--color-border)",
+            color: "var(--color-text-secondary)",
+          }}
+        >
+          <option value="">Choose a tag</option>
+          {groupsWithTags.map((group) => (
+            <optgroup key={group.id} label={group.name}>
+              {(tagsByGroup.get(group.id) ?? []).map((tag) => (
+                <option key={tag.id} value={tag.slug} disabled={activeSet.has(tag.slug)}>
+                  {tag.name}
+                </option>
+              ))}
+            </optgroup>
+          ))}
+        </select>
       </div>
 
-      {/* Expanded category's tags */}
-      {expandedGroupId && (
-        <div className="flex flex-wrap gap-1.5 pt-1">
-          {(tagsByGroup.get(expandedGroupId) ?? []).map((tag) => {
-            const isSelected = activeSet.has(tag.slug);
+      {/* Desktop: category chip browser — pick a category to reveal its tags. */}
+      <div className="hidden sm:block space-y-3">
+        <div
+          className="flex flex-wrap gap-1.5 pt-3 border-t"
+          style={{ borderColor: "var(--color-border)" }}
+        >
+          {orderedGroups.map((group) => {
+            const isOpen = expandedGroupId === group.id;
+            const groupTags = tagsByGroup.get(group.id) ?? [];
+            const selectedCount = groupTags.filter((t) => activeSet.has(t.slug)).length;
             return (
               <button
-                key={tag.id}
+                key={group.id}
                 type="button"
-                onClick={() => toggle(tag.slug)}
-                className="text-xs px-3 py-1 rounded-full transition-colors cursor-pointer"
+                onClick={() => setExpandedGroupId(isOpen ? null : group.id)}
+                className="text-xs px-3 py-1 rounded-full font-medium border transition-colors cursor-pointer"
                 style={{
-                  backgroundColor: isSelected ? "var(--color-primary)" : "var(--color-bg)",
-                  color: isSelected ? "var(--color-text-primary)" : "var(--color-text-secondary)",
-                  border: "1px solid",
-                  borderColor: isSelected ? "var(--color-primary)" : "var(--color-border)",
+                  backgroundColor: isOpen ? "var(--color-primary)" : "var(--color-surface)",
+                  color: isOpen ? "var(--color-text-primary)" : "var(--color-text-secondary)",
+                  borderColor: "var(--color-border)",
                 }}
               >
-                {tag.name}
+                {group.name}
+                {selectedCount > 0 && (
+                  <span className="ml-1.5 text-[10px] opacity-70">({selectedCount})</span>
+                )}
               </button>
             );
           })}
         </div>
-      )}
 
-      {/* How-to hint */}
-      <p className="text-xs" style={{ color: "var(--color-text-muted)" }}>
-        Click a category to browse &amp; select tags
-      </p>
+        {/* Expanded category's tags */}
+        {expandedGroupId && (
+          <div className="flex flex-wrap gap-1.5 pt-1">
+            {(tagsByGroup.get(expandedGroupId) ?? []).map((tag) => {
+              const isSelected = activeSet.has(tag.slug);
+              return (
+                <button
+                  key={tag.id}
+                  type="button"
+                  onClick={() => toggle(tag.slug)}
+                  className="text-xs px-3 py-1 rounded-full transition-colors cursor-pointer"
+                  style={{
+                    backgroundColor: isSelected ? "var(--color-primary)" : "var(--color-bg)",
+                    color: isSelected ? "var(--color-text-primary)" : "var(--color-text-secondary)",
+                    border: "1px solid",
+                    borderColor: isSelected ? "var(--color-primary)" : "var(--color-border)",
+                  }}
+                >
+                  {tag.name}
+                </button>
+              );
+            })}
+          </div>
+        )}
+
+        {/* How-to hint */}
+        <p className="text-xs" style={{ color: "var(--color-text-muted)" }}>
+          Click a category to browse &amp; select tags
+        </p>
+      </div>
     </div>
   );
 }
