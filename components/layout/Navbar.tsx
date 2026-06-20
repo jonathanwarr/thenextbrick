@@ -151,18 +151,6 @@ export default function Navbar() {
             })}
           </nav>
 
-          {/* Hamburger (mobile only) */}
-          <button
-            onClick={() => setMenuOpen((o) => !o)}
-            className="md:hidden flex items-center justify-center w-11 h-11 rounded-lg cursor-pointer transition-opacity hover:opacity-70"
-            style={{ color: "var(--color-text-secondary)" }}
-            aria-label="Menu"
-            aria-expanded={menuOpen}
-            aria-controls="mobile-nav"
-          >
-            <MenuIcon open={menuOpen} />
-          </button>
-
           {/* Theme toggle */}
           <button
             onClick={toggleTheme}
@@ -203,6 +191,18 @@ export default function Navbar() {
                 <MoonIcon />
               </span>
             </span>
+          </button>
+
+          {/* Hamburger (mobile only) */}
+          <button
+            onClick={() => setMenuOpen((o) => !o)}
+            className="md:hidden flex items-center justify-center w-11 h-11 rounded-lg cursor-pointer transition-opacity hover:opacity-70"
+            style={{ color: "var(--color-text-secondary)" }}
+            aria-label="Menu"
+            aria-expanded={menuOpen}
+            aria-controls="mobile-nav"
+          >
+            <MenuIcon open={menuOpen} />
           </button>
         </div>
       </div>
