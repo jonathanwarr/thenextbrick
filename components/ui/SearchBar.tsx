@@ -383,7 +383,7 @@ export default function SearchBar({ initialQuery = "", size = "hero" }: SearchBa
               openMobileSearch();
             }
           }}
-          placeholder="Search the library, tags or keywords"
+          placeholder="Search by keywords"
           className="flex-1 bg-transparent text-sm outline-none"
           style={{ color: "var(--color-text-primary)" }}
           aria-label="Search"
@@ -472,7 +472,7 @@ export default function SearchBar({ initialQuery = "", size = "hero" }: SearchBa
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 onKeyDown={handleKeyDown}
-                placeholder="Search the library, tags or keywords"
+                placeholder="Search by keywords"
                 className="flex-1 bg-transparent text-base outline-none"
                 style={{ color: "var(--color-text-primary)" }}
                 aria-label="Search"
