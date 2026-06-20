@@ -50,7 +50,12 @@ export default async function HomePage() {
       <main className="flex-1 flex flex-col min-h-0">
 
         {/* Hero */}
-        <section className="flex flex-col items-center text-center px-6 py-12 max-md:min-h-[calc(100svh-7rem)] max-md:justify-center lock:flex-1 lock:justify-center lock:pt-hero-top lock:pb-hero-bottom">
+        <section className="flex flex-col items-center text-center px-6 py-12 max-md:min-h-[calc(100svh-7rem)] max-md:justify-between max-md:pt-8 lock:flex-1 lock:justify-center lock:pt-hero-top lock:pb-hero-bottom">
+          {/* Top group: eyebrow, headline, subtitle. `contents` on desktop so
+              the locked layout still centers all four items together; a flex
+              column on mobile so the eyebrow rides up top and the search drops
+              toward the bottom. */}
+          <div className="contents max-md:flex max-md:flex-col max-md:items-center max-md:w-full">
           {/* Editorial rule */}
           <div
             className="flex items-center justify-center gap-2 sm:gap-4 w-full max-w-[640px] mb-hero-gap"
@@ -94,6 +99,7 @@ export default async function HomePage() {
           >
             AI Enablement. One Brick at a Time.
           </p>
+          </div>
 
           {/* Search */}
           <div

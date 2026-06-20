@@ -443,7 +443,7 @@ export default function SearchBar({ initialQuery = "", size = "hero" }: SearchBa
           aria-label="Search"
         >
           <div
-            className="flex items-center gap-3 px-4 border-b shrink-0"
+            className="px-4 border-b shrink-0"
             style={{
               borderColor: "var(--color-border)",
               paddingTop: "calc(env(safe-area-inset-top, 0px) + 0.75rem)",
@@ -451,8 +451,11 @@ export default function SearchBar({ initialQuery = "", size = "hero" }: SearchBa
               backgroundColor: "var(--color-bg)",
             }}
           >
+            {/* Full-width search field; a compact × on the right closes the
+                overlay (replacing a wider "Cancel" label so the bar can span
+                the full width). */}
             <div
-              className="flex items-center gap-3 flex-1 rounded-xl border px-4 py-3"
+              className="flex items-center gap-3 rounded-xl border px-4 py-3"
               style={{
                 backgroundColor: "var(--color-surface-raised)",
                 borderColor: "rgba(217,172,140,0.6)",
@@ -476,29 +479,16 @@ export default function SearchBar({ initialQuery = "", size = "hero" }: SearchBa
                 aria-autocomplete="list"
                 enterKeyHint="search"
               />
-              {query.length > 0 && (
-                <button
-                  type="button"
-                  onClick={() => {
-                    setQuery("");
-                    overlayInputRef.current?.focus();
-                  }}
-                  className="flex items-center justify-center shrink-0 transition-opacity hover:opacity-70"
-                  style={{ color: "var(--color-text-muted)" }}
-                  aria-label="Clear search"
-                >
-                  <ClearIcon />
-                </button>
-              )}
+              <button
+                type="button"
+                onClick={closeMobileSearch}
+                className="flex items-center justify-center shrink-0 w-7 h-7 -mr-1 transition-opacity hover:opacity-70"
+                style={{ color: "var(--color-text-muted)" }}
+                aria-label="Close search"
+              >
+                <ClearIcon />
+              </button>
             </div>
-            <button
-              type="button"
-              onClick={closeMobileSearch}
-              className="shrink-0 text-sm font-semibold transition-opacity hover:opacity-70"
-              style={{ color: "var(--color-primary)" }}
-            >
-              Cancel
-            </button>
           </div>
 
           <div className="flex-1 overflow-y-auto overscroll-contain text-left">
