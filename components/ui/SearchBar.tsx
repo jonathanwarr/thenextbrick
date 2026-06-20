@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { createPortal } from "react-dom";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -37,6 +37,14 @@ function SearchIcon() {
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <circle cx="11" cy="11" r="8" />
       <line x1="21" y1="21" x2="16.65" y2="16.65" />
+    </svg>
+  );
+}
+function ClearIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <line x1="6" y1="6" x2="18" y2="18" />
+      <line x1="18" y1="6" x2="6" y2="18" />
     </svg>
   );
 }
@@ -84,20 +92,39 @@ const categoryLabel: Record<Category, string> = {
 
 const EMPTY: SearchResults = { tags: [], articles: [], total: 0 };
 
+const MOBILE_QUERY = "(max-width: 47.999rem)";
+
+// Track the mobile breakpoint without setState-in-effect. The full-screen
+// search overlay is mobile-only; desktop keeps the anchored dropdown.
+function useIsMobile() {
+  return useSyncExternalStore(
+    (onChange) => {
+      const mq = window.matchMedia(MOBILE_QUERY);
+      mq.addEventListener("change", onChange);
+      return () => mq.removeEventListener("change", onChange);
+    },
+    () => window.matchMedia(MOBILE_QUERY).matches,
+    () => false,
+  );
+}
+
 export default function SearchBar({ initialQuery = "", size = "hero" }: SearchBarProps) {
   const [query, setQuery] = useState(initialQuery);
   const [results, setResults] = useState<SearchResults>(EMPTY);
   const [loading, setLoading] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [isFocused, setIsFocused] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
   const [dropdownRect, setDropdownRect] = useState<{ top: number; left: number; width: number } | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const overlayInputRef = useRef<HTMLInputElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const itemRefs = useRef<(HTMLDivElement | null)[]>([]);
   const router = useRouter();
+  const isMobile = useIsMobile();
 
   useEffect(() => {
-    function handleKeyDown(e: KeyboardEvent) {
+    function handleGlobalKeyDown(e: KeyboardEvent) {
       if ((e.metaKey || e.ctrlKey) && e.key === "k") {
         e.preventDefault();
         inputRef.current?.focus();
@@ -107,8 +134,8 @@ export default function SearchBar({ initialQuery = "", size = "hero" }: SearchBa
         inputRef.current?.focus();
       }
     }
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
+    window.addEventListener("keydown", handleGlobalKeyDown);
+    return () => window.removeEventListener("keydown", handleGlobalKeyDown);
   }, []);
 
   // Debounced search
@@ -165,6 +192,20 @@ export default function SearchBar({ initialQuery = "", size = "hero" }: SearchBa
     itemRefs.current[selectedIndex]?.scrollIntoView({ block: "nearest", behavior: "smooth" });
   }, [selectedIndex]);
 
+  // Move focus into the overlay and lock background scroll while it's open so
+  // the page behind doesn't scroll under the full-screen search. Gating on
+  // isMobile too means crossing the breakpoint mid-search tears the overlay
+  // down and restores scrolling (the render is gated on isMobile as well).
+  useEffect(() => {
+    if (!(mobileOpen && isMobile)) return;
+    overlayInputRef.current?.focus();
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [mobileOpen, isMobile]);
+
   const allItems = [
     ...results.tags.map((t) => ({ type: "tag" as const, data: t })),
     ...results.articles.map((a) => ({ type: "article" as const, data: a })),
@@ -172,10 +213,22 @@ export default function SearchBar({ initialQuery = "", size = "hero" }: SearchBa
 
   const showDropdown = isFocused && query.length > 0;
 
+  function openMobileSearch() {
+    setMobileOpen(true);
+  }
+
+  function closeMobileSearch() {
+    setMobileOpen(false);
+    overlayInputRef.current?.blur();
+    inputRef.current?.blur();
+  }
+
   function handleKeyDown(e: React.KeyboardEvent) {
     if (e.key === "Escape") {
       setIsFocused(false);
+      setMobileOpen(false);
       inputRef.current?.blur();
+      overlayInputRef.current?.blur();
       return;
     }
     if (e.key === "Enter") {
@@ -183,14 +236,15 @@ export default function SearchBar({ initialQuery = "", size = "hero" }: SearchBa
         const item = allItems[selectedIndex];
         if (item.type === "tag") router.push(`/bricks?tag=${item.data.slug}`);
         else router.push(`/bricks/${item.data.slug}`);
-        setIsFocused(false);
       } else if (query.trim()) {
         router.push(`/bricks?q=${encodeURIComponent(query)}`);
-        setIsFocused(false);
       }
+      setIsFocused(false);
+      setMobileOpen(false);
       return;
     }
-    if (!showDropdown || allItems.length === 0) return;
+    const navigable = mobileOpen || showDropdown;
+    if (!navigable || allItems.length === 0) return;
     if (e.key === "ArrowDown") {
       e.preventDefault();
       setSelectedIndex((i) => Math.min(i + 1, allItems.length - 1));
@@ -200,6 +254,98 @@ export default function SearchBar({ initialQuery = "", size = "hero" }: SearchBa
       setSelectedIndex((i) => Math.max(i - 1, 0));
     }
   }
+
+  const status = (text: string) => (
+    <div className="px-5 py-6">
+      <p className="text-sm" style={{ color: "var(--color-text-secondary)" }}>
+        {text}
+      </p>
+    </div>
+  );
+
+  // Shared result rows for both the desktop dropdown and the mobile overlay.
+  // `onNavigate` runs when a result is chosen so each surface can dismiss itself.
+  const resultRows = (onNavigate: () => void) => (
+    <>
+      {results.tags.map((tag, i) => (
+        <div key={tag.slug} ref={(el) => { itemRefs.current[i] = el; }}>
+          <Link
+            href={`/bricks?tag=${tag.slug}`}
+            onClick={onNavigate}
+            className="flex items-center gap-3 px-5 py-3 transition-colors"
+            style={{
+              backgroundColor: selectedIndex === i ? "var(--color-accent)" : "transparent",
+            }}
+            onMouseEnter={() => setSelectedIndex(i)}
+          >
+            <span
+              className="flex items-center justify-center w-7 h-7 rounded-lg shrink-0"
+              style={{ backgroundColor: "var(--color-surface)", color: "var(--color-primary)" }}
+            >
+              <TagIcon />
+            </span>
+            <span className="flex-1 text-sm" style={{ color: selectedIndex === i ? "var(--color-dark)" : "var(--color-text-primary)" }}>
+              #{tag.slug}
+              <span className="ml-1.5" style={{ color: selectedIndex === i ? "rgba(40,39,36,0.7)" : "var(--color-text-muted)" }}>
+                · {tag.count} {tag.count === 1 ? "article" : "articles"}
+              </span>
+            </span>
+          </Link>
+        </div>
+      ))}
+
+      {results.tags.length > 0 && results.articles.length > 0 && (
+        <div className="mx-5 border-b" style={{ borderColor: "var(--color-border)" }} />
+      )}
+
+      {results.articles.map((article, i) => {
+        const globalIndex = results.tags.length + i;
+        return (
+          <div key={article.slug} ref={(el) => { itemRefs.current[globalIndex] = el; }}>
+            <Link
+              href={`/bricks/${article.slug}`}
+              onClick={onNavigate}
+              className="flex items-center gap-3 px-5 py-3 transition-colors"
+              style={{
+                backgroundColor: selectedIndex === globalIndex ? "var(--color-accent)" : "transparent",
+              }}
+              onMouseEnter={() => setSelectedIndex(globalIndex)}
+            >
+              <span
+                className="flex items-center justify-center w-7 h-7 rounded-lg shrink-0"
+                style={{ backgroundColor: "var(--color-surface)", color: "var(--color-text-secondary)" }}
+              >
+                {categoryIcon[article.category]}
+              </span>
+              <span className="flex-1 text-sm truncate" style={{ color: selectedIndex === globalIndex ? "var(--color-dark)" : "var(--color-text-primary)" }}>
+                {article.title}
+              </span>
+              <span
+                className="text-[10px] font-medium px-2 py-0.5 rounded-full shrink-0"
+                style={{ backgroundColor: "var(--color-surface)", color: "var(--color-text-secondary)" }}
+              >
+                {categoryLabel[article.category]}
+              </span>
+            </Link>
+          </div>
+        );
+      })}
+
+      {results.total > results.articles.length && (
+        <Link
+          href={`/bricks?q=${encodeURIComponent(query)}`}
+          onClick={onNavigate}
+          className="flex items-center justify-center gap-1.5 px-5 py-3 border-t text-sm font-medium transition-opacity hover:opacity-70"
+          style={{
+            borderColor: "var(--color-border)",
+            color: "var(--color-primary)",
+          }}
+        >
+          See all {results.total} results for &ldquo;{query}&rdquo; →
+        </Link>
+      )}
+    </>
+  );
 
   const isHero = size === "hero";
 
@@ -225,13 +371,24 @@ export default function SearchBar({ initialQuery = "", size = "hero" }: SearchBa
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           onKeyDown={handleKeyDown}
-          onFocus={() => setIsFocused(true)}
+          onFocus={() => {
+            if (isMobile) openMobileSearch();
+            else setIsFocused(true);
+          }}
+          onMouseDown={(e) => {
+            // On mobile, open the overlay instead of focusing the inline input
+            // (which would briefly raise the keyboard against the small bar).
+            if (isMobile) {
+              e.preventDefault();
+              openMobileSearch();
+            }
+          }}
           placeholder="Search the library, tags or keywords"
           className="flex-1 bg-transparent text-sm outline-none"
           style={{ color: "var(--color-text-primary)" }}
           aria-label="Search"
           aria-autocomplete="list"
-          aria-expanded={showDropdown}
+          aria-expanded={showDropdown || mobileOpen}
         />
         <span className="hidden md:flex items-center gap-1 shrink-0 opacity-60">
           <kbd
@@ -248,7 +405,8 @@ export default function SearchBar({ initialQuery = "", size = "hero" }: SearchBa
         </span>
       </div>
 
-      {showDropdown && dropdownRect && createPortal(
+      {/* Desktop: anchored dropdown */}
+      {!isMobile && showDropdown && dropdownRect && createPortal(
         <>
           <div className="fixed inset-0 z-[100]" onClick={() => setIsFocused(false)} />
           <div
@@ -262,100 +420,97 @@ export default function SearchBar({ initialQuery = "", size = "hero" }: SearchBa
             }}
           >
             {loading && allItems.length === 0 ? (
-              <div className="px-5 py-6">
-                <p className="text-sm" style={{ color: "var(--color-text-secondary)" }}>
-                  Searching…
-                </p>
-              </div>
+              status("Searching…")
             ) : allItems.length === 0 ? (
-              <div className="px-5 py-6">
-                <p className="text-sm" style={{ color: "var(--color-text-secondary)" }}>
-                  No matches for &ldquo;{query}&rdquo;
-                </p>
-              </div>
+              status(`No matches for “${query}”`)
             ) : (
               <div className="max-h-[320px] overflow-y-auto">
-                {results.tags.map((tag, i) => (
-                  <div key={tag.slug} ref={(el) => { itemRefs.current[i] = el; }}>
-                    <Link
-                      href={`/bricks?tag=${tag.slug}`}
-                      onClick={() => setIsFocused(false)}
-                      className="flex items-center gap-3 px-5 py-3 transition-colors"
-                      style={{
-                        backgroundColor: selectedIndex === i ? "var(--color-accent)" : "transparent",
-                      }}
-                      onMouseEnter={() => setSelectedIndex(i)}
-                    >
-                      <span
-                        className="flex items-center justify-center w-7 h-7 rounded-lg shrink-0"
-                        style={{ backgroundColor: "var(--color-surface)", color: "var(--color-primary)" }}
-                      >
-                        <TagIcon />
-                      </span>
-                      <span className="flex-1 text-sm" style={{ color: selectedIndex === i ? "var(--color-dark)" : "var(--color-text-primary)" }}>
-                        #{tag.slug}
-                        <span className="ml-1.5" style={{ color: selectedIndex === i ? "rgba(40,39,36,0.7)" : "var(--color-text-muted)" }}>
-                          · {tag.count} {tag.count === 1 ? "article" : "articles"}
-                        </span>
-                      </span>
-                    </Link>
-                  </div>
-                ))}
-
-                {results.tags.length > 0 && results.articles.length > 0 && (
-                  <div className="mx-5 border-b" style={{ borderColor: "var(--color-border)" }} />
-                )}
-
-                {results.articles.map((article, i) => {
-                  const globalIndex = results.tags.length + i;
-                  return (
-                    <div key={article.slug} ref={(el) => { itemRefs.current[globalIndex] = el; }}>
-                      <Link
-                        href={`/bricks/${article.slug}`}
-                        onClick={() => setIsFocused(false)}
-                        className="flex items-center gap-3 px-5 py-3 transition-colors"
-                        style={{
-                          backgroundColor: selectedIndex === globalIndex ? "var(--color-accent)" : "transparent",
-                        }}
-                        onMouseEnter={() => setSelectedIndex(globalIndex)}
-                      >
-                        <span
-                          className="flex items-center justify-center w-7 h-7 rounded-lg shrink-0"
-                          style={{ backgroundColor: "var(--color-surface)", color: "var(--color-text-secondary)" }}
-                        >
-                          {categoryIcon[article.category]}
-                        </span>
-                        <span className="flex-1 text-sm truncate" style={{ color: selectedIndex === globalIndex ? "var(--color-dark)" : "var(--color-text-primary)" }}>
-                          {article.title}
-                        </span>
-                        <span
-                          className="text-[10px] font-medium px-2 py-0.5 rounded-full shrink-0"
-                          style={{ backgroundColor: "var(--color-surface)", color: "var(--color-text-secondary)" }}
-                        >
-                          {categoryLabel[article.category]}
-                        </span>
-                      </Link>
-                    </div>
-                  );
-                })}
-
-                {results.total > results.articles.length && (
-                  <Link
-                    href={`/bricks?q=${encodeURIComponent(query)}`}
-                    onClick={() => setIsFocused(false)}
-                    className="flex items-center justify-center gap-1.5 px-5 py-3 border-t text-sm font-medium transition-opacity hover:opacity-70"
-                    style={{
-                      borderColor: "var(--color-border)",
-                      color: "var(--color-primary)",
-                    }}
-                  >
-                    See all {results.total} results for &ldquo;{query}&rdquo; →
-                  </Link>
-                )}
+                {resultRows(() => setIsFocused(false))}
               </div>
             )}
           </div>
         </>,
+        document.body
+      )}
+
+      {/* Mobile: full-screen search experience */}
+      {isMobile && mobileOpen && createPortal(
+        <div
+          className="fixed inset-0 z-[200] flex flex-col"
+          style={{ backgroundColor: "var(--color-bg)" }}
+          role="dialog"
+          aria-modal="true"
+          aria-label="Search"
+        >
+          <div
+            className="flex items-center gap-3 px-4 border-b shrink-0"
+            style={{
+              borderColor: "var(--color-border)",
+              paddingTop: "calc(env(safe-area-inset-top, 0px) + 0.75rem)",
+              paddingBottom: "0.75rem",
+              backgroundColor: "var(--color-bg)",
+            }}
+          >
+            <div
+              className="flex items-center gap-3 flex-1 rounded-xl border px-4 py-3"
+              style={{
+                backgroundColor: "var(--color-surface-raised)",
+                borderColor: "rgba(217,172,140,0.6)",
+                outline: "1.5px solid rgba(217,172,140,0.6)",
+                outlineOffset: "-1.5px",
+              }}
+            >
+              <span style={{ color: "var(--color-text-muted)" }}>
+                <SearchIcon />
+              </span>
+              <input
+                ref={overlayInputRef}
+                type="text"
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                onKeyDown={handleKeyDown}
+                placeholder="Search the library, tags or keywords"
+                className="flex-1 bg-transparent text-base outline-none"
+                style={{ color: "var(--color-text-primary)" }}
+                aria-label="Search"
+                aria-autocomplete="list"
+                enterKeyHint="search"
+              />
+              {query.length > 0 && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setQuery("");
+                    overlayInputRef.current?.focus();
+                  }}
+                  className="flex items-center justify-center shrink-0 transition-opacity hover:opacity-70"
+                  style={{ color: "var(--color-text-muted)" }}
+                  aria-label="Clear search"
+                >
+                  <ClearIcon />
+                </button>
+              )}
+            </div>
+            <button
+              type="button"
+              onClick={closeMobileSearch}
+              className="shrink-0 text-sm font-semibold transition-opacity hover:opacity-70"
+              style={{ color: "var(--color-primary)" }}
+            >
+              Cancel
+            </button>
+          </div>
+
+          <div className="flex-1 overflow-y-auto overscroll-contain text-left">
+            {query.length === 0
+              ? status("Search for any article, playbook, essay, or tag.")
+              : loading && allItems.length === 0
+                ? status("Searching…")
+                : allItems.length === 0
+                  ? status(`No matches for “${query}”`)
+                  : resultRows(() => setMobileOpen(false))}
+          </div>
+        </div>,
         document.body
       )}
     </div>
