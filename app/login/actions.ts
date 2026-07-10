@@ -1,7 +1,7 @@
 "use server";
 
-import { headers } from "next/headers";
 import { redirect } from "next/navigation";
+import { getSiteUrl } from "@/lib/site-url";
 import { createClient } from "@/lib/supabase/server";
 
 export async function signInWithEmail(formData: FormData) {
@@ -10,19 +10,14 @@ export async function signInWithEmail(formData: FormData) {
     redirect("/login?error=missing-email");
   }
 
-  const headerList = await headers();
-  const origin =
-    headerList.get("origin") ??
-    (headerList.get("host")
-      ? `${headerList.get("x-forwarded-proto") ?? "https"}://${headerList.get("host")}`
-      : "");
+  const siteUrl = await getSiteUrl();
 
   const supabase = await createClient();
   const { error } = await supabase.auth.signInWithOtp({
     email,
     options: {
       shouldCreateUser: false,
-      emailRedirectTo: `${origin}/auth/callback`,
+      emailRedirectTo: `${siteUrl}/auth/callback`,
     },
   });
 
