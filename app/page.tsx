@@ -84,7 +84,7 @@ export default async function HomePage() {
             }}
           >
             <span className="font-semibold" style={{ color: "var(--color-primary)" }}>Claude</span>{" "}
-            <span className="font-normal">for Professionals</span>
+            <span className="font-normal">for Customer Success</span>
           </h1>
 
           {/* Subtitle */}
@@ -97,7 +97,7 @@ export default async function HomePage() {
               animationDelay: "160ms",
             }}
           >
-            AI Enablement. One Brick at a Time.
+            AI Fluency. One Brick at a Time.
           </p>
           </div>
 
