@@ -187,7 +187,8 @@ export default function TagFilter({
                 key={group.id}
                 type="button"
                 onClick={() => setExpandedGroupId(isOpen ? null : group.id)}
-                className="text-xs px-3 py-1 rounded-full font-medium border transition-colors cursor-pointer"
+                aria-expanded={isOpen}
+                className="inline-flex items-center gap-1.5 text-xs px-3 py-1 rounded-md font-medium border transition-colors cursor-pointer"
                 style={{
                   backgroundColor: isOpen ? "var(--color-primary)" : "var(--color-surface)",
                   color: isOpen ? "var(--color-text-primary)" : "var(--color-text-secondary)",
@@ -196,8 +197,22 @@ export default function TagFilter({
               >
                 {group.name}
                 {selectedCount > 0 && (
-                  <span className="ml-1.5 text-[10px] opacity-70">({selectedCount})</span>
+                  <span className="text-[10px] opacity-70">({selectedCount})</span>
                 )}
+                <svg
+                  viewBox="0 0 24 24"
+                  width="12"
+                  height="12"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  aria-hidden="true"
+                  className={`transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`}
+                >
+                  <path d="m6 9 6 6 6-6" />
+                </svg>
               </button>
             );
           })}

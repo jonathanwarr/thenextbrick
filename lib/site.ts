@@ -7,7 +7,7 @@ export const siteConfig = {
   name: "The Next Brick",
   // Canonical public origin (no trailing slash). Mirrors NEXT_PUBLIC_SITE_URL.
   url: (process.env.NEXT_PUBLIC_SITE_URL ?? "https://thenextbrick.ai").replace(/\/+$/, ""),
-  tagline: "AI Enablement. One Brick at a Time.",
+  tagline: "AI Fluency. One Brick at a Time.",
   // Brand-true description: experienced operators, anti-hype, practical.
   description:
     "AI enablement for professionals who already have the craft. Practical, no-hype guidance on putting Claude to work — one concept, one application, one brick at a time.",

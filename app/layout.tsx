@@ -16,7 +16,7 @@ const newsreader = Newsreader({
   style: ["normal", "italic"],
 });
 
-const defaultTitle = "The Next Brick — AI Enablement, One Brick at a Time";
+const defaultTitle = "The Next Brick — AI Fluency, One Brick at a Time";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.url),

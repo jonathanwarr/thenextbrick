@@ -1,7 +1,7 @@
 import { ImageResponse } from "next/og";
 import { siteConfig } from "@/lib/site";
 
-export const alt = "The Next Brick — AI Enablement, One Brick at a Time";
+export const alt = "The Next Brick — AI Fluency, One Brick at a Time";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
