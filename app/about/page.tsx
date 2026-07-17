@@ -160,7 +160,7 @@ export default function AboutPage() {
 
           {/* Headshot column */}
           <div
-            className="flex flex-col order-1 md:order-2 w-full max-w-[240px] mx-auto md:mx-0"
+            className="flex flex-col order-1 md:order-2 w-full max-w-[320px] mx-auto md:mx-0 md:mt-12"
             style={{ animation: "fadeUp 0.5s ease both", animationDelay: "80ms" }}
           >
             <div
@@ -174,7 +174,7 @@ export default function AboutPage() {
                 src="/images/about/jonathan-headshot.png"
                 alt="Jonathan Warr"
                 fill
-                sizes="240px"
+                sizes="320px"
                 priority
                 className="object-cover"
               />
