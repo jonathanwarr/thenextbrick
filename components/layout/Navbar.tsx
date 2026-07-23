@@ -66,6 +66,7 @@ const navLinks = [
   { href: "/", label: "Home" },
   { href: "/bricks", label: "Library" },
   { href: "/about", label: "About" },
+  { href: "/connect", label: "Let's Connect" },
 ];
 
 export default function Navbar() {

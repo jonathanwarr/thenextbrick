@@ -5,6 +5,7 @@ import TagPicker, {
   type AvailableTag,
 } from "./TagPicker";
 import PublishedAtInput from "./PublishedAtInput";
+import SaveBar from "./SaveBar";
 import { KNOWN_CATEGORIES } from "@/lib/posts/types";
 import { categoryLabels, type Category } from "@/components/ui/BrickCard";
 
@@ -69,31 +70,6 @@ export default function PostForm({
           </form>
         )}
       </div>
-
-      {saved && (
-        <div
-          className="rounded-lg px-4 py-3 text-sm"
-          style={{
-            backgroundColor: "var(--color-surface)",
-            border: "1px solid var(--color-primary)",
-            color: "var(--color-text-primary)",
-          }}
-        >
-          Saved.
-        </div>
-      )}
-      {error && (
-        <div
-          className="rounded-lg px-4 py-3 text-sm"
-          style={{
-            backgroundColor: "var(--color-surface)",
-            border: "1px solid var(--color-primary)",
-            color: "var(--color-primary)",
-          }}
-        >
-          {error}
-        </div>
-      )}
 
       <form action={savePost} className="space-y-5">
         {isEdit && <input type="hidden" name="id" value={values.id} />}
@@ -209,25 +185,7 @@ export default function PostForm({
           </Field>
         </div>
 
-        <div className="flex items-center gap-3 pt-4 border-t" style={{ borderColor: "var(--color-border)" }}>
-          <button
-            type="submit"
-            className="px-5 py-2.5 rounded-full font-medium text-sm transition-opacity hover:opacity-90 cursor-pointer"
-            style={{
-              backgroundColor: "var(--color-primary)",
-              color: "var(--color-text-primary)",
-            }}
-          >
-            Save
-          </button>
-          <Link
-            href="/admin/posts"
-            className="text-sm hover:opacity-70"
-            style={{ color: "var(--color-text-secondary)" }}
-          >
-            Cancel
-          </Link>
-        </div>
+        <SaveBar saved={saved} error={error} />
       </form>
     </div>
   );

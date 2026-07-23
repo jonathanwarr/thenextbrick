@@ -5,6 +5,7 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
+import ConnectCTA from "@/components/ui/ConnectCTA";
 import { CategoryIcon, categoryColors, categoryLabels } from "@/components/ui/BrickCard";
 import { getPostBySlug } from "@/lib/posts/queries";
 import { formatFullDate } from "@/lib/posts/format";
@@ -180,6 +181,8 @@ export default async function PostPage({ params }: { params: PostParams }) {
             ))}
           </div>
         )}
+
+        <ConnectCTA location="article" />
       </main>
 
       <Footer />

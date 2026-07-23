@@ -1,6 +1,11 @@
 import { cache } from "react";
 import { createClient } from "@/lib/supabase/server";
-import { normalizeCategory, type PostListItem, type PostDetail } from "./types";
+import {
+  normalizeCategory,
+  KNOWN_CATEGORIES,
+  type PostListItem,
+  type PostDetail,
+} from "./types";
 import type { TagFilterGroup, TagFilterTag } from "@/components/ui/TagFilter";
 
 type PostRow = {
@@ -236,26 +241,53 @@ export async function searchPosts(query: string): Promise<PostListItem[]> {
     .ilike("slug", `%${query.toLowerCase()}%`);
   const tagIds = (tagRows ?? []).map((t) => t.id);
 
-  if (tagIds.length === 0) return ftsList;
+  let tagList: PostListItem[] = [];
+  if (tagIds.length > 0) {
+    const { data: tagPostIds } = await supabase
+      .from("post_tags")
+      .select("post_id")
+      .in("tag_id", tagIds);
+    const postIds = Array.from(
+      new Set((tagPostIds ?? []).map((p) => p.post_id)),
+    );
 
-  const { data: tagPostIds } = await supabase
-    .from("post_tags")
-    .select("post_id")
-    .in("tag_id", tagIds);
-  const postIds = Array.from(new Set((tagPostIds ?? []).map((p) => p.post_id)));
+    if (postIds.length > 0) {
+      const { data: tagPosts } = await supabase
+        .from("posts")
+        .select(PUBLISHED_LIST_SELECT)
+        .eq("status", "published")
+        .in("id", postIds)
+        .limit(20);
+      tagList = ((tagPosts ?? []) as unknown as PostRow[]).map(toListItem);
+    }
+  }
 
-  if (postIds.length === 0) return ftsList;
+  // Type-aware search: "articles", "playbooks", "essays" (or any ≥3-char
+  // prefix like "playbook") match the posts.category Type field directly, so
+  // content types stay findable without a Content tag group.
+  const normalized = query.trim().toLowerCase();
+  const categoryMatches =
+    normalized.length >= 3
+      ? KNOWN_CATEGORIES.filter((c) => c.startsWith(normalized))
+      : [];
 
-  const { data: tagPosts } = await supabase
-    .from("posts")
-    .select(PUBLISHED_LIST_SELECT)
-    .eq("status", "published")
-    .in("id", postIds)
-    .limit(20);
-
-  const tagList = ((tagPosts ?? []) as unknown as PostRow[]).map(toListItem);
+  let categoryList: PostListItem[] = [];
+  if (categoryMatches.length > 0) {
+    const { data: categoryPosts } = await supabase
+      .from("posts")
+      .select(PUBLISHED_LIST_SELECT)
+      .eq("status", "published")
+      .in("category", categoryMatches)
+      .order("published_at", { ascending: false })
+      .limit(20);
+    categoryList = ((categoryPosts ?? []) as unknown as PostRow[]).map(
+      toListItem,
+    );
+  }
 
   const merged = new Map<string, PostListItem>();
-  for (const p of [...ftsList, ...tagList]) merged.set(p.id, p);
+  for (const p of [...ftsList, ...tagList, ...categoryList]) {
+    merged.set(p.id, p);
+  }
   return Array.from(merged.values());
 }

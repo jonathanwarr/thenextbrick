@@ -14,6 +14,9 @@ export const siteConfig = {
   author: {
     name: "Jonathan Warr",
     linkedin: "https://www.linkedin.com/in/jonathan-warr/",
+    email: "jonathan@amwarr.com",
+    website: "https://amwarr.com",
+    calendly: "https://calendly.com/jonathan-amwarr/15-minute-coffee-connect",
   },
   locale: "en_US",
 } as const;
