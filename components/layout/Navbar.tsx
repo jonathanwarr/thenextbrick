@@ -106,7 +106,7 @@ export default function Navbar() {
         borderColor: "var(--color-border)",
       }}
     >
-      <div className="max-w-7xl mx-auto px-6 lg:px-8 h-16 flex items-center justify-between">
+      <div className="max-w-7xl mx-auto px-6 lg:px-8 h-16 relative flex items-center justify-between">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-3 shrink-0">
           <BrickIcon />
@@ -129,29 +129,30 @@ export default function Navbar() {
           </span>
         </Link>
 
-        {/* Right group: nav + theme toggle, aligned right */}
-        <div className="flex items-center gap-6">
-          {/* Nav */}
-          <nav className="hidden md:flex items-center gap-8">
-            {navLinks.map(({ href, label }) => {
-              const isActive =
-                href === "/" ? pathname === "/" : pathname.startsWith(href);
-              return (
-                <Link
-                  key={href}
-                  href={href}
-                  className="text-[15px] font-semibold transition-colors"
-                  style={{
-                    fontFamily: "var(--font-family-serif)",
-                    color: isActive ? "var(--color-primary)" : "var(--color-text-secondary)",
-                  }}
-                >
-                  {label}
-                </Link>
-              );
-            })}
-          </nav>
+        {/* Nav — centered in the bar on desktop, independent of the logo and
+            toggle widths */}
+        <nav className="hidden md:flex items-center gap-8 absolute left-1/2 -translate-x-1/2">
+          {navLinks.map(({ href, label }) => {
+            const isActive =
+              href === "/" ? pathname === "/" : pathname.startsWith(href);
+            return (
+              <Link
+                key={href}
+                href={href}
+                className="text-[15px] font-semibold transition-colors whitespace-nowrap"
+                style={{
+                  fontFamily: "var(--font-family-serif)",
+                  color: isActive ? "var(--color-primary)" : "var(--color-text-secondary)",
+                }}
+              >
+                {label}
+              </Link>
+            );
+          })}
+        </nav>
 
+        {/* Right group: theme toggle (+ hamburger on mobile) */}
+        <div className="flex items-center gap-6">
           {/* Theme toggle */}
           <button
             onClick={toggleTheme}
@@ -208,33 +209,47 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* Mobile nav panel */}
-      {menuOpen && (
+      {/* Mobile nav panel — overlays the page below the bar instead of
+          pushing content down, unfolding top-to-bottom (animated
+          grid-template-rows). The raised surface color separates it from the
+          page background behind it; `inert` keeps the collapsed panel's links
+          out of the tab order. */}
+      <div
+        id="mobile-nav"
+        inert={!menuOpen}
+        className={`md:hidden absolute top-full left-0 right-0 grid transition-[grid-template-rows] duration-300 ease-out ${
+          menuOpen ? "grid-rows-[1fr]" : "grid-rows-[0fr]"
+        }`}
+      >
         <nav
-          id="mobile-nav"
-          className="md:hidden border-t px-6 py-2"
-          style={{ borderColor: "var(--color-border)" }}
+          className={`overflow-hidden min-h-0 ${menuOpen ? "border-b shadow-lg" : ""}`}
+          style={{
+            backgroundColor: "var(--color-surface-raised)",
+            borderColor: "var(--color-border)",
+          }}
         >
-          {navLinks.map(({ href, label }) => {
-            const isActive =
-              href === "/" ? pathname === "/" : pathname.startsWith(href);
-            return (
-              <Link
-                key={href}
-                href={href}
-                onClick={() => setMenuOpen(false)}
-                className="block py-3 text-lg font-semibold transition-colors"
-                style={{
-                  fontFamily: "var(--font-family-serif)",
-                  color: isActive ? "var(--color-primary)" : "var(--color-text-secondary)",
-                }}
-              >
-                {label}
-              </Link>
-            );
-          })}
+          <div className="px-6 py-2">
+            {navLinks.map(({ href, label }) => {
+              const isActive =
+                href === "/" ? pathname === "/" : pathname.startsWith(href);
+              return (
+                <Link
+                  key={href}
+                  href={href}
+                  onClick={() => setMenuOpen(false)}
+                  className="block py-3 text-lg font-semibold transition-colors"
+                  style={{
+                    fontFamily: "var(--font-family-serif)",
+                    color: isActive ? "var(--color-primary)" : "var(--color-text-secondary)",
+                  }}
+                >
+                  {label}
+                </Link>
+              );
+            })}
+          </div>
         </nav>
-      )}
+      </div>
     </header>
   );
 }

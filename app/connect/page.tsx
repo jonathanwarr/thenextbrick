@@ -62,16 +62,18 @@ export default function ConnectPage() {
             <p>
               If there&apos;s one thing I enjoy more than building with{" "}
               <span style={{ color: "var(--color-primary)" }}>Claude</span>, it&apos;s
-              helping other people get good at it. Training and enablement are where
-              I light up — taking a professional from AI-curious to AI-fluent, one
-              brick at a time.
+              helping others adopt it. Coaching and witnessing someone unlock real
+              value with these tools and improve their day-to-day workflow brings me
+              genuine enjoyment. Nothing beats the moments of seeing someone
+              you&apos;re working with take the corner on a concept and realize
+              something they can now do that they couldn&apos;t before.
             </p>
             <p>
               Whether you want to trade notes on Claude, talk through an enablement
               challenge in customer success, or explore coaching opportunities,
-              I&apos;d genuinely love to hear from you. Pick whichever door suits you
-              best.
+              I&apos;d love to hear from you.
             </p>
+            <p>Pick whichever door suits you best.</p>
           </div>
         </section>
 
