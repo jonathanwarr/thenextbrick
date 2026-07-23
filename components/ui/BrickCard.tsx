@@ -145,7 +145,7 @@ export default function BrickCard({
                 {tags.map((tag) => (
                   <span
                     key={tag}
-                    className="text-xs px-2 py-0.5 rounded-full font-medium"
+                    className="inline-block h-5 leading-5 max-w-full truncate text-xs px-2 rounded-full font-medium"
                     style={{ backgroundColor: "var(--color-border)", color: "var(--color-text-secondary)" }}
                   >
                     #{tag}
@@ -220,7 +220,7 @@ export default function BrickCard({
               {tags.map((tag) => (
                 <span
                   key={tag}
-                  className="text-xs px-2 py-0.5 rounded-full font-medium"
+                  className="inline-block h-5 leading-5 max-w-full truncate text-xs px-2 rounded-full font-medium"
                   style={{ backgroundColor: "var(--color-border)", color: "var(--color-text-secondary)" }}
                 >
                   #{tag}
