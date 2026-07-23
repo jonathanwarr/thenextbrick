@@ -131,19 +131,6 @@ export default async function BricksPage({
       <Navbar />
 
       <main className="flex-1 max-w-7xl mx-auto w-full px-6 lg:px-8 pt-section-y pb-section-b">
-        <p
-          className="text-[10px] font-semibold uppercase tracking-widest mb-3 flex items-center gap-2"
-          style={{ color: "var(--color-text-muted)" }}
-        >
-          Archive
-          <span
-            className="px-2.5 py-0.5 rounded-full text-xs font-family-sans font-semibold tracking-wide"
-            style={{ backgroundColor: "var(--color-surface)", color: "var(--color-text-secondary)" }}
-          >
-            {totalPosts} brick{totalPosts === 1 ? "" : "s"}
-          </span>
-        </p>
-
         <h1 className="text-title font-medium mb-2">Every Brick, Searchable.</h1>
         {/* Redundant with the search field's own placeholder on phones, where
             vertical space is tight — keep it from sm up. */}
