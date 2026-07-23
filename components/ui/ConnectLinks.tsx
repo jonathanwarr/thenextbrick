@@ -30,7 +30,8 @@ const channels: Channel[] = [
   {
     key: "linkedin",
     title: "LinkedIn",
-    description: "Connect and follow along as new bricks land.",
+    description:
+      "Connect and subscribe to the LinkedIn newsletter as new articles drop weekly.",
     href: siteConfig.author.linkedin,
     external: true,
     icon: <LinkedInIcon size={20} />,
@@ -45,8 +46,8 @@ const channels: Channel[] = [
   },
   {
     key: "website",
-    title: "amwarr.com",
-    description: "Coaching and consulting on my personal site.",
+    title: "AWC",
+    description: "Coaching and consulting at amwarr.com.",
     href: siteConfig.author.website,
     external: true,
     icon: <GlobeIcon size={20} />,
