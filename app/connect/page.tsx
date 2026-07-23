@@ -62,7 +62,10 @@ export default function ConnectPage() {
             <p>
               If there&apos;s one thing I enjoy more than building with{" "}
               <span style={{ color: "var(--color-primary)" }}>Claude</span>, it&apos;s
-              helping others adopt it. Coaching and witnessing someone unlock real
+              helping others adopt it. 
+            </p> 
+            <p>
+              Coaching and witnessing someone unlock real
               value with these tools and improve their day-to-day workflow brings me
               genuine enjoyment. Nothing beats the moments of seeing someone
               you&apos;re working with take the corner on a concept and realize
