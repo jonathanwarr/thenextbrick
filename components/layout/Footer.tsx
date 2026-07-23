@@ -3,6 +3,7 @@ import Link from "next/link";
 const links = [
   { label: "Library", href: "/bricks" },
   { label: "About", href: "/about" },
+  { label: "Let's Connect", href: "/connect" },
 ];
 
 function LinkedInIcon() {

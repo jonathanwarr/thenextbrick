@@ -2,6 +2,13 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
+import { siteConfig } from "@/lib/site";
+import {
+  LinkedInIcon,
+  MailIcon,
+  GlobeIcon,
+  CalendarIcon,
+} from "@/components/ui/ContactIcons";
 
 export const metadata: Metadata = {
   title: "About",
@@ -9,30 +16,6 @@ export const metadata: Metadata = {
     "About Jon Warr and The Next Brick — helping customer success professionals develop AI fluency with Claude, one brick at a time.",
   alternates: { canonical: "/about" },
 };
-
-function LinkedInIcon() {
-  return (
-    <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18" aria-hidden="true">
-      <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.063 2.063 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452z" />
-    </svg>
-  );
-}
-
-function MailIcon() {
-  return (
-    <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18" aria-hidden="true">
-      <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z" />
-    </svg>
-  );
-}
-
-function GlobeIcon() {
-  return (
-    <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18" aria-hidden="true">
-      <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z" />
-    </svg>
-  );
-}
 
 export default function AboutPage() {
   return (
@@ -125,7 +108,7 @@ export default function AboutPage() {
 
             <div className="flex items-center gap-4 mt-5 self-start">
               <a
-                href="https://www.linkedin.com/in/jonathan-warr/"
+                href={siteConfig.author.linkedin}
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="LinkedIn"
@@ -136,16 +119,16 @@ export default function AboutPage() {
                 <LinkedInIcon />
               </a>
               <a
-                href="mailto:jonathan@amwarr.com"
+                href={`mailto:${siteConfig.author.email}`}
                 aria-label="Email Jonathan"
-                title="jonathan@amwarr.com"
+                title={siteConfig.author.email}
                 className="transition-opacity hover:opacity-70"
                 style={{ color: "var(--color-primary)" }}
               >
                 <MailIcon />
               </a>
               <a
-                href="https://amwarr.com"
+                href={siteConfig.author.website}
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Personal website"
@@ -155,12 +138,26 @@ export default function AboutPage() {
               >
                 <GlobeIcon />
               </a>
+              <a
+                href={siteConfig.author.calendly}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Book a 15-minute coffee and connect"
+                title="Book a 15-minute coffee & connect"
+                className="transition-opacity hover:opacity-70"
+                style={{ color: "var(--color-primary)" }}
+              >
+                <CalendarIcon />
+              </a>
             </div>
           </div>
 
-          {/* Headshot column */}
+          {/* Headshot column. On md+ the top margin drops the photo past the
+              "Welcome." headline and its divider so it tops out level with the
+              opening "I'm Jon…" line: headline height (display-lg × 1.05
+              line-height) + divider block (mt-5 + 1px + mb-4 ≈ 2.3rem). */}
           <div
-            className="flex flex-col order-1 md:order-2 w-full max-w-[240px] mx-auto md:mx-0"
+            className="flex flex-col order-1 md:order-2 w-full max-w-[300px] lg:max-w-[340px] mx-auto md:mx-0 md:mt-[calc(var(--text-display-lg)*1.05_+_2.3rem)]"
             style={{ animation: "fadeUp 0.5s ease both", animationDelay: "80ms" }}
           >
             <div
@@ -174,8 +171,8 @@ export default function AboutPage() {
                 src="/images/about/jonathan-headshot.png"
                 alt="Jonathan Warr"
                 fill
-                sizes="240px"
-                priority
+                sizes="(min-width: 1024px) 340px, 300px"
+                preload
                 className="object-cover"
               />
             </div>

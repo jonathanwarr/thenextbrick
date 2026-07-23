@@ -67,16 +67,18 @@ function FeaturedCard({ article }: { article: PostListItem }) {
         </p>
 
         {article.tags.length > 0 && (
-          <div className="flex flex-wrap gap-1 mt-auto pt-1">
-            {article.tags.map((tag) => (
-              <span
-                key={tag}
-                className="text-xs px-2 py-0.5 rounded-full font-medium"
-                style={{ backgroundColor: "var(--color-border)", color: "var(--color-text-secondary)" }}
-              >
-                #{tag}
-              </span>
-            ))}
+          <div className="mt-auto pt-1">
+            <div className="flex flex-wrap gap-1.5 tag-rows-2">
+              {article.tags.map((tag) => (
+                <span
+                  key={tag}
+                  className="text-xs px-2 py-0.5 rounded-full font-medium"
+                  style={{ backgroundColor: "var(--color-border)", color: "var(--color-text-secondary)" }}
+                >
+                  #{tag}
+                </span>
+              ))}
+            </div>
           </div>
         )}
       </div>

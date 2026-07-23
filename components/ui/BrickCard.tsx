@@ -141,7 +141,7 @@ export default function BrickCard({
               rather than crop. */}
           <div className="mt-auto flex flex-col gap-3 pt-1 lock-trim:hidden">
             {tags.length > 0 && (
-              <div className="flex flex-wrap gap-1.5 lock-tight:hidden">
+              <div className="flex flex-wrap gap-1.5 tag-rows-2 lock-tight:hidden">
                 {tags.map((tag) => (
                   <span
                     key={tag}
@@ -212,18 +212,21 @@ export default function BrickCard({
           </p>
         )}
 
-        {/* Tags */}
+        {/* Tags — spacing lives on the wrapper so the row cap's max-height
+            budgets chips only */}
         {tags.length > 0 && (
-          <div className="flex flex-wrap gap-1 mt-auto pt-1">
-            {tags.map((tag) => (
-              <span
-                key={tag}
-                className="text-xs px-2 py-0.5 rounded-full font-medium"
-                style={{ backgroundColor: "var(--color-border)", color: "var(--color-text-secondary)" }}
-              >
-                #{tag}
-              </span>
-            ))}
+          <div className="mt-auto pt-1">
+            <div className="flex flex-wrap gap-1.5 tag-rows-2">
+              {tags.map((tag) => (
+                <span
+                  key={tag}
+                  className="text-xs px-2 py-0.5 rounded-full font-medium"
+                  style={{ backgroundColor: "var(--color-border)", color: "var(--color-text-secondary)" }}
+                >
+                  #{tag}
+                </span>
+              ))}
+            </div>
           </div>
         )}
       </div>

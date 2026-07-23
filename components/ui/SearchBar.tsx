@@ -4,6 +4,7 @@ import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { createPortal } from "react-dom";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { trackEvent } from "@/lib/metrics";
 
 interface SearchBarProps {
   initialQuery?: string;
@@ -123,6 +124,14 @@ export default function SearchBar({ initialQuery = "", size = "hero" }: SearchBa
   const router = useRouter();
   const isMobile = useIsMobile();
 
+  // Latest results + last-logged query for the metrics effect below, without
+  // retriggering it when results stream in.
+  const resultsRef = useRef<SearchResults>(EMPTY);
+  useEffect(() => {
+    resultsRef.current = results;
+  }, [results]);
+  const lastLoggedQueryRef = useRef("");
+
   useEffect(() => {
     function handleGlobalKeyDown(e: KeyboardEvent) {
       if ((e.metaKey || e.ctrlKey) && e.key === "k") {
@@ -168,6 +177,20 @@ export default function SearchBar({ initialQuery = "", size = "hero" }: SearchBa
       controller.abort();
       clearTimeout(timer);
     };
+  }, [query]);
+
+  // Metrics: log what people actually search for. A much longer debounce than
+  // the fetch (which fires per keystroke-pause) so half-typed prefixes don't
+  // flood the log — only queries the user settled on get recorded.
+  useEffect(() => {
+    const q = query.trim();
+    if (q.length < 2) return;
+    const timer = setTimeout(() => {
+      if (lastLoggedQueryRef.current === q) return;
+      lastLoggedQueryRef.current = q;
+      trackEvent("search_query", { query: q, results: resultsRef.current.total });
+    }, 1500);
+    return () => clearTimeout(timer);
   }, [query]);
 
   useEffect(() => {
@@ -234,9 +257,16 @@ export default function SearchBar({ initialQuery = "", size = "hero" }: SearchBa
     if (e.key === "Enter") {
       if (allItems[selectedIndex]) {
         const item = allItems[selectedIndex];
+        trackEvent("search_result_click", {
+          query: query.trim(),
+          kind: item.type,
+          slug: item.data.slug,
+          position: selectedIndex,
+        });
         if (item.type === "tag") router.push(`/bricks?tag=${item.data.slug}`);
         else router.push(`/bricks/${item.data.slug}`);
       } else if (query.trim()) {
+        trackEvent("search_submit", { query: query.trim(), results: results.total });
         router.push(`/bricks?q=${encodeURIComponent(query)}`);
       }
       setIsFocused(false);
@@ -271,7 +301,15 @@ export default function SearchBar({ initialQuery = "", size = "hero" }: SearchBa
         <div key={tag.slug} ref={(el) => { itemRefs.current[i] = el; }}>
           <Link
             href={`/bricks?tag=${tag.slug}`}
-            onClick={onNavigate}
+            onClick={() => {
+              trackEvent("search_result_click", {
+                query: query.trim(),
+                kind: "tag",
+                slug: tag.slug,
+                position: i,
+              });
+              onNavigate();
+            }}
             className="flex items-center gap-3 px-5 py-3 transition-colors"
             style={{
               backgroundColor: selectedIndex === i ? "var(--color-accent)" : "transparent",
@@ -304,7 +342,15 @@ export default function SearchBar({ initialQuery = "", size = "hero" }: SearchBa
           <div key={article.slug} ref={(el) => { itemRefs.current[globalIndex] = el; }}>
             <Link
               href={`/bricks/${article.slug}`}
-              onClick={onNavigate}
+              onClick={() => {
+                trackEvent("search_result_click", {
+                  query: query.trim(),
+                  kind: "article",
+                  slug: article.slug,
+                  position: globalIndex,
+                });
+                onNavigate();
+              }}
               className="flex items-center gap-3 px-5 py-3 transition-colors"
               style={{
                 backgroundColor: selectedIndex === globalIndex ? "var(--color-accent)" : "transparent",
@@ -334,7 +380,10 @@ export default function SearchBar({ initialQuery = "", size = "hero" }: SearchBa
       {results.total > results.articles.length && (
         <Link
           href={`/bricks?q=${encodeURIComponent(query)}`}
-          onClick={onNavigate}
+          onClick={() => {
+            trackEvent("search_submit", { query: query.trim(), results: results.total });
+            onNavigate();
+          }}
           className="flex items-center justify-center gap-1.5 px-5 py-3 border-t text-sm font-medium transition-opacity hover:opacity-70"
           style={{
             borderColor: "var(--color-border)",

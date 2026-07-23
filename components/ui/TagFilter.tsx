@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { trackEvent } from "@/lib/metrics";
 
 export type TagFilterGroup = {
   id: string;
@@ -85,6 +86,10 @@ export default function TagFilter({
     const next = new Set(activeSet);
     if (next.has(slug)) next.delete(slug);
     else next.add(slug);
+    trackEvent("tag_filter", {
+      tag: slug,
+      action: activeSet.has(slug) ? "remove" : "add",
+    });
     applyTags(Array.from(next));
   }
 
@@ -92,6 +97,7 @@ export default function TagFilter({
   // Removal there happens by tapping the × on a chip in the selected tray.
   function addTag(slug: string) {
     if (activeSet.has(slug)) return;
+    trackEvent("tag_filter", { tag: slug, action: "add" });
     applyTags([...activeTags, slug]);
   }
 
