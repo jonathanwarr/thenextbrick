@@ -201,11 +201,13 @@ export default function BrickCard({
           {title}
         </p>
 
-        {/* Excerpt — steps aside in the tight locked band so the card
-            truncates at a line boundary instead of cropping mid-glyph */}
+        {/* Excerpt — steps aside in the tight locked band, and (via the
+            card-excerpt container query) whenever the card's actual slot is
+            too short for the full stack, so the card truncates at a line
+            boundary instead of cropping the tag rows at its bottom edge */}
         {excerpt && (
           <p
-            className="text-sm leading-relaxed line-clamp-2 lock-tight:hidden font-family-serif"
+            className="card-excerpt text-sm leading-relaxed line-clamp-2 lock-tight:hidden font-family-serif"
             style={{ color: "var(--color-text-secondary)" }}
           >
             {excerpt}

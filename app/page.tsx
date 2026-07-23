@@ -159,6 +159,7 @@ export default async function HomePage() {
                   category={recent[1].category}
                   tags={recent[1].tags}
                   excerpt={recent[1].dek ?? undefined}
+                  className="home-card"
                 />
               )}
               {recent[2] && (
@@ -169,6 +170,7 @@ export default async function HomePage() {
                   category={recent[2].category}
                   tags={recent[2].tags}
                   excerpt={recent[2].dek ?? undefined}
+                  className="home-card"
                 />
               )}
             </div>
