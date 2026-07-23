@@ -172,11 +172,14 @@ body {
 
 /* Card tag chips cap at two wrapped rows — a post can carry any number of
    tags, but a card never grows a third row; overflow is clipped at the row
-   boundary. Height = 2 chip rows (text-xs 1rem line + 2 × py-0.5) + one
-   gap-1.5 between them. Containers using this must use gap-1.5. */
+   boundary. Chips inside must be h-5/leading-5 (a pinned 1.25rem box, so
+   OS/browser text-size settings can't grow a row past the budget) and the
+   container must use gap-1.5. The 2px cushion absorbs fractional rounding
+   at non-integer zoom levels; row 3 starts a full gap lower, so it can
+   never peek through. */
 .tag-rows-2 {
   overflow: hidden;
-  max-height: calc(2 * 1.25rem + 0.375rem);
+  max-height: calc(2 * 1.25rem + 0.375rem + 2px);
 }
 
 @keyframes fadeUp {
