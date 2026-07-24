@@ -15,6 +15,7 @@
   --color-text-primary: #363430;   /* lm-text-primary (mode-dependent) */
   --color-text-secondary: #504F49; /* dm-bg-surface-secondary (mode-dependent) */
   --color-text-muted: #76746C;     /* lm-text-muted (mode-dependent) */
+  --color-logo-text: #C28B70;      /* brand-primary (mode-dependent — lighter accent in dark) */
 
   /* UI */
   --color-border: #E8E6DC;  /* lm-bg-surface-secondary (mode-dependent) */
@@ -147,6 +148,7 @@ body {
     --color-text-secondary: #E8E6DC;     /* lm-bg-surface-secondary */
     --color-text-muted: #9E9C94;         /* dm-text-muted */
     --color-border: #504F49;             /* dm-bg-surface-secondary */
+    --color-logo-text: #D9AC8C;          /* brand-accent-primary */
   }
 }
 
@@ -158,6 +160,7 @@ body {
   --color-text-secondary: #E8E6DC;
   --color-text-muted: #9E9C94;
   --color-border: #504F49;
+  --color-logo-text: #D9AC8C;
 }
 
 .light {
@@ -168,6 +171,7 @@ body {
   --color-text-secondary: #504F49;
   --color-text-muted: #76746C;
   --color-border: #E8E6DC;
+  --color-logo-text: #C28B70;
 }
 
 /* Card tag chips cap at two wrapped rows — a post can carry any number of
