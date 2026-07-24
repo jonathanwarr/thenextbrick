@@ -1,23 +1,9 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
-
-function BrickIcon() {
-  return (
-    <div className="flex flex-col gap-[3px] w-14 h-10 shrink-0">
-      <div className="flex gap-[3px] flex-1">
-        <div className="flex-[2] rounded-[2px]" style={{ backgroundColor: "var(--color-primary)" }} />
-        <div className="flex-[1] rounded-[2px]" style={{ backgroundColor: "var(--color-secondary)" }} />
-      </div>
-      <div className="flex gap-[3px] flex-1">
-        <div className="flex-[1] rounded-[2px]" style={{ backgroundColor: "var(--color-secondary)" }} />
-        <div className="flex-[2] rounded-[2px]" style={{ backgroundColor: "var(--color-primary)" }} />
-      </div>
-    </div>
-  );
-}
 
 function MenuIcon({ open }: { open: boolean }) {
   return (
@@ -107,25 +93,23 @@ export default function Navbar() {
       }}
     >
       <div className="max-w-7xl mx-auto px-6 lg:px-8 h-16 relative flex items-center justify-between">
-        {/* Logo */}
-        <Link href="/" className="flex items-center gap-3 shrink-0">
-          <BrickIcon />
+        {/* Logo — wordmark scales via container query units so its
+            rendered width always matches the icon's width above it. */}
+        <Link
+          href="/"
+          className="flex flex-col items-center w-10 shrink-0"
+          style={{ containerType: "inline-size" }}
+        >
+          <Image src="/images/tnb-icon.svg" alt="" width={40} height={40} className="w-10 h-10" />
           <span
-            className="h-10 flex flex-col justify-between leading-none"
-            style={{ fontFamily: "var(--font-family-serif)" }}
+            className="mt-1 w-full text-center font-semibold leading-none whitespace-nowrap"
+            style={{
+              fontFamily: "var(--font-family-serif)",
+              color: "var(--color-primary)",
+              fontSize: "11.2cqw",
+            }}
           >
-            <span
-              className="text-xs font-semibold tracking-wide"
-              style={{ color: "var(--color-text-secondary)" }}
-            >
-              The Next
-            </span>
-            <span
-              className="text-xl font-bold"
-              style={{ color: "var(--color-primary)" }}
-            >
-              Brick
-            </span>
+            The Next Brick
           </span>
         </Link>
 
