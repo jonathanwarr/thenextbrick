@@ -93,23 +93,18 @@ export default function Navbar() {
       }}
     >
       <div className="max-w-7xl mx-auto px-6 lg:px-8 h-16 relative flex items-center justify-between">
-        {/* Logo — wordmark scales via container query units so its
-            rendered width always matches the icon's width above it. */}
-        <Link
-          href="/"
-          className="flex flex-col items-center w-10 shrink-0"
-          style={{ containerType: "inline-size" }}
-        >
-          <Image src="/images/tnb-icon.svg" alt="" width={40} height={40} className="w-10 h-10" />
+        {/* Logo — icon with the wordmark stacked beside it, one word per
+            line. The text block is deliberately a touch shorter than the
+            icon so it reads as sitting inside its height, not matching it. */}
+        <Link href="/" className="flex items-center gap-2.5 shrink-0">
+          <Image src="/images/tnb-icon.svg" alt="" width={40} height={40} className="w-10 h-10 rounded-[3px]" />
           <span
-            className="mt-1 w-full text-center font-semibold leading-none whitespace-nowrap"
-            style={{
-              fontFamily: "var(--font-family-serif)",
-              color: "var(--color-primary)",
-              fontSize: "11.2cqw",
-            }}
+            className="h-9 flex flex-col justify-between font-bold leading-none"
+            style={{ fontFamily: "var(--font-family-serif)", color: "var(--color-logo-text)", fontSize: "13px" }}
           >
-            The Next Brick
+            <span>The</span>
+            <span>Next</span>
+            <span>Brick</span>
           </span>
         </Link>
 
