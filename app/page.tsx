@@ -51,39 +51,19 @@ export default async function HomePage() {
 
         {/* Hero */}
         <section className="flex flex-col items-center text-center px-6 py-12 max-md:min-h-[calc(100svh-7rem)] max-md:justify-between max-md:pt-8 lock:flex-1 lock:justify-center lock:pt-hero-top lock:pb-hero-bottom">
-          {/* Top group: eyebrow, headline, subtitle. `contents` on desktop so
-              the locked layout still centers all four items together; a flex
-              column on mobile so the eyebrow rides up top and the search drops
-              toward the bottom. */}
+          {/* Top group: headline, subtitle. `contents` on desktop so the
+              locked layout still centers all items together; a flex column
+              on mobile so the search drops toward the bottom. */}
           <div className="contents max-md:flex max-md:flex-col max-md:items-center max-md:w-full">
-          {/* Editorial rule */}
-          <div
-            className="flex items-center justify-center gap-2 sm:gap-4 w-full max-w-[640px] mb-hero-gap"
-            style={{ animation: "fadeUp 0.5s ease both", animationDelay: "0ms" }}
-          >
-            <div className="hidden sm:block h-px flex-1" style={{ backgroundColor: "var(--color-border)" }} />
-            <span
-              className="text-[11px] font-bold tracking-[0.15em] uppercase text-center"
-              style={{ color: "var(--color-text-muted)" }}
-            >
-              Articles
-              <span className="mx-1.5 sm:mx-2.5 opacity-50">·</span>
-              Playbooks
-              <span className="mx-1.5 sm:mx-2.5 opacity-50">·</span>
-              Essays
-            </span>
-            <div className="hidden sm:block h-px flex-1" style={{ backgroundColor: "var(--color-border)" }} />
-          </div>
-
           {/* Headline */}
           <h1
             className="text-display font-bold mb-2"
             style={{
               animation: "fadeUp 0.5s ease both",
-              animationDelay: "80ms",
+              animationDelay: "0ms",
             }}
           >
-            <span className="font-semibold" style={{ color: "var(--color-primary)" }}>Claude</span>{" "}
+            <span className="font-semibold" style={{ color: "var(--color-primary)" }}>AI Fluency</span>{" "}
             <span className="font-normal">for Customer Success</span>
           </h1>
 
@@ -97,7 +77,7 @@ export default async function HomePage() {
               animationDelay: "160ms",
             }}
           >
-            AI Fluency. One Brick at a Time.
+            Learn <span style={{ color: "var(--color-primary)" }}>Claude</span>. One Brick at a Time
           </p>
           </div>
 
