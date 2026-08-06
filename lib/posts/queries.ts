@@ -257,10 +257,15 @@ export async function searchPosts(query: string): Promise<PostListItem[]> {
 
   const ftsList = ((ftsResults ?? []) as unknown as PostRow[]).map(toListItem);
 
+  // Same normalization as the search API's tag lookup: "customer support"
+  // must match the customer-support slug and the "Customer Support" name.
+  // Commas/parens are stripped — they are PostgREST .or() syntax.
+  const nameNeedle = query.trim().toLowerCase().replace(/[,()]/g, "");
+  const slugNeedle = nameNeedle.replace(/\s+/g, "-");
   const { data: tagRows } = await supabase
     .from("tags")
     .select("id")
-    .ilike("slug", `%${query.toLowerCase()}%`);
+    .or(`slug.ilike.%${slugNeedle}%,name.ilike.%${nameNeedle}%`);
   const tagIds = (tagRows ?? []).map((t) => t.id);
 
   let tagList: PostListItem[] = [];

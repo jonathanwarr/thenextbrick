@@ -244,6 +244,8 @@ body {
   font-size: clamp(1rem, 0.95rem + 0.4vw, 1.0625rem);
   line-height: 1.7;
   color: var(--color-text-primary);
+  /* Long unbroken tokens (URLs, slugs) must wrap, never widen the page. */
+  overflow-wrap: break-word;
 }
 .post-body h2 {
   font-family: var(--font-family-serif);
@@ -293,9 +295,12 @@ body {
   background-color: var(--color-surface);
   padding: 1rem;
   border-radius: 8px;
-  overflow-x: auto;
   margin-bottom: 1.25rem;
   border: 1px solid var(--color-border);
+  /* Code blocks here are mostly prompt prose: wrap instead of scrolling —
+     horizontal scroll anywhere in the article body is a hard no. */
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
 }
 .post-body pre code {
   background: none;
