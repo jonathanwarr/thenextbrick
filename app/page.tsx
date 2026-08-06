@@ -52,9 +52,18 @@ export default async function HomePage() {
         {/* Hero */}
         <section className="flex flex-col items-center text-center px-6 py-12 max-md:min-h-[calc(100svh-7rem)] max-md:justify-between max-md:pt-8 lock:flex-1 lock:justify-center lock:pt-hero-top lock:pb-hero-bottom">
           {/* Top group: headline, subtitle. `contents` on desktop so the
-              locked layout still centers all items together; a flex column
-              on mobile so the search drops toward the bottom. */}
-          <div className="contents max-md:flex max-md:flex-col max-md:items-center max-md:w-full">
+              locked layout still centers all items together; on mobile a
+              flex column that absorbs the leftover height, so the headline
+              block can sit low without dragging the search down with it. */}
+          <div className="contents max-md:flex max-md:flex-col max-md:items-center max-md:w-full max-md:flex-1">
+          {/* Mobile-only spacers. They split the free space above and below
+              the headline block 85:115 (the Figma ratio), parking it just
+              above the vertical centre while the search stays pinned to the
+              bottom of the hero. `hidden` keeps them out of the desktop
+              layout, where the parent is `contents` and they would become
+              flex items of the hero itself. */}
+          <div className="hidden max-md:block max-md:flex-[85]" />
+
           {/* Headline */}
           <h1
             className="text-display font-bold mb-2"
@@ -79,6 +88,8 @@ export default async function HomePage() {
           >
             Learn <span style={{ color: "var(--color-primary)" }}>Claude</span>. One Brick at a Time
           </p>
+
+          <div className="hidden max-md:block max-md:flex-[115]" />
           </div>
 
           {/* Search */}
