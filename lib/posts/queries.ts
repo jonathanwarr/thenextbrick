@@ -1,5 +1,5 @@
 import { cache } from "react";
-import { createClient } from "@/lib/supabase/server";
+import { createClient, createServiceClient } from "@/lib/supabase/server";
 import {
   normalizeCategory,
   KNOWN_CATEGORIES,
@@ -172,6 +172,28 @@ export const getPostBySlug = cache(
     return toDetail(data as unknown as PostRow);
   },
 );
+
+/**
+ * Admin-only: fetch a post by id regardless of status, for the editor's
+ * preview route. Uses the service client (bypasses RLS) — the caller must
+ * have verified the viewer is an admin; never call this from a public code
+ * path. Returns the same PostDetail shape the public article page renders,
+ * plus the raw status for the preview banner.
+ */
+export async function getPostForPreview(
+  id: string,
+): Promise<{ post: PostDetail; status: string } | null> {
+  const supabase = createServiceClient();
+  const { data, error } = await supabase
+    .from("posts")
+    .select(PUBLISHED_DETAIL_SELECT)
+    .eq("id", id)
+    .maybeSingle();
+
+  if (error || !data) return null;
+  const row = data as unknown as PostRow;
+  return { post: toDetail(row), status: row.status };
+}
 
 export async function listPopularTags(limit = 8): Promise<string[]> {
   const supabase = await createClient();

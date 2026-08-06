@@ -136,6 +136,30 @@ export type Database = {
         }
         Relationships: []
       }
+      site_events: {
+        Row: {
+          created_at: string
+          event_type: string
+          id: string
+          path: string | null
+          payload: Json
+        }
+        Insert: {
+          created_at?: string
+          event_type: string
+          id?: string
+          path?: string | null
+          payload?: Json
+        }
+        Update: {
+          created_at?: string
+          event_type?: string
+          id?: string
+          path?: string | null
+          payload?: Json
+        }
+        Relationships: []
+      }
       subscribers: {
         Row: {
           confirmation_token: string
@@ -236,6 +260,112 @@ export type Database = {
             columns: ["group_id"]
             isOneToOne: false
             referencedRelation: "tag_groups"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      topic_artifacts: {
+        Row: {
+          content_md: string
+          created_at: string
+          id: string
+          stage: string
+          topic_id: string
+          updated_at: string
+        }
+        Insert: {
+          content_md: string
+          created_at?: string
+          id?: string
+          stage: string
+          topic_id: string
+          updated_at?: string
+        }
+        Update: {
+          content_md?: string
+          created_at?: string
+          id?: string
+          stage?: string
+          topic_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "topic_artifacts_topic_id_fkey"
+            columns: ["topic_id"]
+            isOneToOne: false
+            referencedRelation: "topic_bank"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      topic_bank: {
+        Row: {
+          angle: string | null
+          approval: string | null
+          created_at: string
+          dek: string | null
+          id: string
+          notes: string | null
+          post_id: string | null
+          read_time_min: number | null
+          reasoning: string | null
+          slug: string | null
+          status: string
+          tags: string[] | null
+          the_brick: string | null
+          title: string | null
+          topic: string
+          type: string | null
+          updated_at: string
+          working_slug: string
+        }
+        Insert: {
+          angle?: string | null
+          approval?: string | null
+          created_at?: string
+          dek?: string | null
+          id?: string
+          notes?: string | null
+          post_id?: string | null
+          read_time_min?: number | null
+          reasoning?: string | null
+          slug?: string | null
+          status?: string
+          tags?: string[] | null
+          the_brick?: string | null
+          title?: string | null
+          topic: string
+          type?: string | null
+          updated_at?: string
+          working_slug: string
+        }
+        Update: {
+          angle?: string | null
+          approval?: string | null
+          created_at?: string
+          dek?: string | null
+          id?: string
+          notes?: string | null
+          post_id?: string | null
+          read_time_min?: number | null
+          reasoning?: string | null
+          slug?: string | null
+          status?: string
+          tags?: string[] | null
+          the_brick?: string | null
+          title?: string | null
+          topic?: string
+          type?: string | null
+          updated_at?: string
+          working_slug?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "topic_bank_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "posts"
             referencedColumns: ["id"]
           },
         ]
