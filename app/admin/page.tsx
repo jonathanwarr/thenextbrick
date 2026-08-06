@@ -3,6 +3,13 @@ import { createServiceClient } from "@/lib/supabase/server";
 import TopicBankTable from "@/components/admin/TopicBankTable";
 import { isInFlight } from "@/lib/topics/types";
 
+/**
+ * `topic_bank` is written by an external editorial pipeline as well as by this
+ * dashboard, so a remembered copy of it is always a lie waiting to be shown.
+ * Force a fresh read on every load; edits refresh the router on top of that.
+ */
+export const dynamic = "force-dynamic";
+
 export default async function AdminDashboardPage() {
   const supabase = createServiceClient();
 
@@ -15,6 +22,8 @@ export default async function AdminDashboardPage() {
         .select("*", { count: "exact", head: true })
         .eq("status", "confirmed"),
       supabase.from("topic_bank").select("*", { count: "exact", head: true }),
+      // `status` comes off the topic row itself. `post_id` is a link target
+      // only — a topic's stage is never derived from its linked post.
       supabase
         .from("topic_bank")
         .select("id, topic, angle, working_slug, approval, type, status, notes, post_id, updated_at")
