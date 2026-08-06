@@ -49,7 +49,7 @@ export default function ConnectCTA({ location }: { location: string }) {
           className="text-[11px] font-bold uppercase tracking-wider"
           style={{ color: "var(--color-text-secondary)" }}
         >
-          Coffee &amp; Connect
+          Coffee &amp; Claude
         </span>
         <p
           className="text-sm leading-relaxed"

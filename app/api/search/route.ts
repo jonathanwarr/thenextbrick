@@ -10,12 +10,17 @@ export async function GET(request: NextRequest) {
   }
 
   const supabase = await createClient();
+  // "customer support" must find the customer-support tag: match the
+  // hyphenized query against slugs and the raw query against display names.
+  // Commas/parens are stripped — they are PostgREST .or() syntax.
+  const nameNeedle = q.toLowerCase().replace(/[,()]/g, "");
+  const slugNeedle = nameNeedle.replace(/\s+/g, "-");
   const [articles, tagMatchesRes] = await Promise.all([
     searchPosts(q),
     supabase
       .from("tags")
       .select("slug, name, post_tags(count)")
-      .ilike("slug", `%${q.toLowerCase()}%`)
+      .or(`slug.ilike.%${slugNeedle}%,name.ilike.%${nameNeedle}%`)
       .limit(3),
   ]);
 

@@ -21,7 +21,7 @@ type Channel = {
 const channels: Channel[] = [
   {
     key: "calendly",
-    title: "Coffee & Connect",
+    title: "Coffee & Claude",
     description: "Book a 15-minute virtual coffee to talk AI, Claude, or coaching.",
     href: siteConfig.author.calendly,
     external: true,
