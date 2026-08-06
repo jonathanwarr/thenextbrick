@@ -118,6 +118,9 @@ export async function savePost(formData: FormData) {
   const readTimeRaw = String(formData.get("read_time_min") ?? "").trim();
   const read_time_min = readTimeRaw ? Number(readTimeRaw) : null;
   const publishedAtRaw = String(formData.get("published_at") ?? "").trim();
+  // Set by the Preview button (SaveBar): same save path, but on success the
+  // editor page gets ?preview=1 so it can open the preview tab.
+  const intent = String(formData.get("intent") ?? "");
 
   const errorTarget = id ? `/admin/posts/${id}` : "/admin/posts/new";
 
@@ -151,7 +154,7 @@ export async function savePost(formData: FormData) {
     revalidatePath(`/bricks/${slug}`);
     revalidatePath("/bricks");
     revalidatePath("/");
-    redirect(`/admin/posts/${id}?saved=1`);
+    redirect(`/admin/posts/${id}?saved=1${intent === "preview" ? "&preview=1" : ""}`);
   } else {
     const { data, error } = await supabase
       .from("posts")

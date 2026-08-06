@@ -29,12 +29,14 @@ export default function PostForm({
   availableTags,
   saved,
   error,
+  preview,
 }: {
   values: PostFormValues;
   availableGroups: AvailableGroup[];
   availableTags: AvailableTag[];
   saved?: boolean;
   error?: string;
+  preview?: boolean;
 }) {
   const isEdit = Boolean(values.id);
 
@@ -185,7 +187,7 @@ export default function PostForm({
           </Field>
         </div>
 
-        <SaveBar saved={saved} error={error} />
+        <SaveBar saved={saved} error={error} postId={values.id} preview={preview} />
       </form>
     </div>
   );

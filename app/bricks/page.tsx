@@ -131,12 +131,12 @@ export default async function BricksPage({
       <Navbar />
 
       <main className="flex-1 max-w-7xl mx-auto w-full px-6 lg:px-8 pt-section-y pb-section-b">
-        <h1 className="text-title font-medium mb-2">Every Brick, Searchable.</h1>
-        {/* Redundant with the search field's own placeholder on phones, where
-            vertical space is tight — keep it from sm up. */}
-        <p className="text-sm mb-8 max-sm:hidden" style={{ color: "var(--color-text-secondary)" }}>
+        <h1
+          className="text-lg sm:text-xl font-medium mb-8"
+          style={{ fontFamily: "var(--font-family-serif)", color: "var(--color-text-secondary)" }}
+        >
           Search for any content by title, tag, or keyword.
-        </p>
+        </h1>
 
         <div className="mb-5 max-sm:mt-6 max-sm:mb-8">
           <SearchBar size="page" initialQuery={searchQuery ?? ""} />
