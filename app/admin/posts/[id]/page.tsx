@@ -5,7 +5,7 @@ import { loadTagPickerData } from "@/lib/admin/tags";
 import { normalizeCategory } from "@/lib/posts/types";
 
 type EditPostParams = Promise<{ id: string }>;
-type EditPostSearchParams = Promise<{ saved?: string; error?: string; preview?: string }>;
+type EditPostSearchParams = Promise<{ saved?: string; error?: string }>;
 
 export default async function EditPostPage({
   params,
@@ -15,7 +15,7 @@ export default async function EditPostPage({
   searchParams: EditPostSearchParams;
 }) {
   const { id } = await params;
-  const { saved, error, preview } = await searchParams;
+  const { saved, error } = await searchParams;
 
   const supabase = createServiceClient();
   const [{ data: post }, { groups, tags: availableTags }] = await Promise.all([
@@ -49,7 +49,6 @@ export default async function EditPostPage({
     <PostForm
       saved={saved === "1"}
       error={error}
-      preview={preview === "1"}
       availableGroups={groups}
       availableTags={availableTags}
       values={{
