@@ -103,7 +103,19 @@ function resolvePublishedAt(
   return { ok: true, value: date.toISOString() };
 }
 
-export async function savePost(formData: FormData) {
+export type SavePostOutcome =
+  | { ok: true; postId: string }
+  | { ok: false; error: string };
+
+/**
+ * The one save path. Both entry points below run this and nothing else, so
+ * "Save" and "Preview" can never drift into saving different things: Preview
+ * used to depend on the server redirecting back with `?preview=1`, which meant
+ * a slow or failed save left its tab waiting on an outcome that never came.
+ *
+ * Returns the outcome instead of redirecting, so a caller can await it.
+ */
+async function persistPost(formData: FormData): Promise<SavePostOutcome> {
   const { supabase, userId } = await requireAdmin();
 
   const id = String(formData.get("id") ?? "");
@@ -118,18 +130,11 @@ export async function savePost(formData: FormData) {
   const readTimeRaw = String(formData.get("read_time_min") ?? "").trim();
   const read_time_min = readTimeRaw ? Number(readTimeRaw) : null;
   const publishedAtRaw = String(formData.get("published_at") ?? "").trim();
-  // Set by the Preview button (SaveBar): same save path, but on success the
-  // editor page gets ?preview=1 so it can open the preview tab.
-  const intent = String(formData.get("intent") ?? "");
 
-  const errorTarget = id ? `/admin/posts/${id}` : "/admin/posts/new";
-
-  if (!title) redirect(`${errorTarget}?error=missing-title`);
+  if (!title) return { ok: false, error: "Title is required." };
 
   const publishedAtResult = resolvePublishedAt(status, publishedAtRaw);
-  if (!publishedAtResult.ok) {
-    redirect(`${errorTarget}?error=${encodeURIComponent(publishedAtResult.error)}`);
-  }
+  if (!publishedAtResult.ok) return { ok: false, error: publishedAtResult.error };
   const published_at = publishedAtResult.value;
 
   if (id) {
@@ -147,39 +152,64 @@ export async function savePost(formData: FormData) {
         published_at,
       })
       .eq("id", id);
-    if (error) redirect(`/admin/posts/${id}?error=${encodeURIComponent(error.message)}`);
+    if (error) return { ok: false, error: error.message };
     await syncTags(supabase, id, tagSlugs);
     revalidatePath("/admin/posts");
     revalidatePath(`/admin/posts/${id}`);
     revalidatePath(`/bricks/${slug}`);
     revalidatePath("/bricks");
     revalidatePath("/");
-    redirect(`/admin/posts/${id}?saved=1${intent === "preview" ? "&preview=1" : ""}`);
-  } else {
-    const { data, error } = await supabase
-      .from("posts")
-      .insert({
-        title,
-        slug,
-        dek,
-        the_brick,
-        body_md,
-        category,
-        status,
-        featured: false,
-        read_time_min,
-        published_at,
-        author_id: userId,
-      })
-      .select("id")
-      .single();
-    if (error || !data) redirect(`/admin/posts/new?error=${encodeURIComponent(error?.message ?? "unknown")}`);
-    await syncTags(supabase, data.id, tagSlugs);
-    revalidatePath("/admin/posts");
-    revalidatePath("/bricks");
-    revalidatePath("/");
-    redirect(`/admin/posts/${data.id}?saved=1`);
+    return { ok: true, postId: id };
   }
+
+  const { data, error } = await supabase
+    .from("posts")
+    .insert({
+      title,
+      slug,
+      dek,
+      the_brick,
+      body_md,
+      category,
+      status,
+      featured: false,
+      read_time_min,
+      published_at,
+      author_id: userId,
+    })
+    .select("id")
+    .single();
+  if (error || !data) {
+    return { ok: false, error: error?.message ?? "The post could not be created." };
+  }
+  await syncTags(supabase, data.id, tagSlugs);
+  revalidatePath("/admin/posts");
+  revalidatePath("/bricks");
+  revalidatePath("/");
+  return { ok: true, postId: data.id };
+}
+
+/** The Save button: saves, then navigates to the editor's saved state. */
+export async function savePost(formData: FormData) {
+  const outcome = await persistPost(formData);
+
+  if (!outcome.ok) {
+    const id = String(formData.get("id") ?? "");
+    const target = id ? `/admin/posts/${id}` : "/admin/posts/new";
+    redirect(`${target}?error=${encodeURIComponent(outcome.error)}`);
+  }
+  redirect(`/admin/posts/${outcome.postId}?saved=1`);
+}
+
+/**
+ * The Preview button: the same save, returned rather than redirected, so the
+ * client can await it and only then point the preview tab it opened — or
+ * report the failure instead of navigating anywhere.
+ */
+export async function savePostForPreview(
+  formData: FormData,
+): Promise<SavePostOutcome> {
+  return persistPost(formData);
 }
 
 /**

@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
+import { savePostForPreview } from "@/app/admin/posts/actions";
 
 /**
  * Save row for the post editor: the Save button plus the saved/error notice,
@@ -16,29 +17,59 @@ import { useEffect, useRef, useState } from "react";
  * MutationObserver covers the TagPicker, which adds/removes hidden inputs
  * without firing events.
  *
- * Preview (edit page only) submits the same form with intent=preview, so the
- * save path — validation included — runs identically; on success the server
- * redirects back with ?preview=1 and the effect below navigates the preview
- * tab. The tab itself must be opened synchronously in the click handler,
- * before the round-trip, or popup blockers eat it; the named window lets the
- * effect (and any retry) target that same tab later.
+ * Preview (edit page only) saves first and previews second, in one click — the
+ * author never has to remember to Save. It runs the same server-side save path
+ * as Save (`persistPost`), awaits the outcome, and only then points the tab it
+ * opened at the preview.
+ *
+ * Two rules keep that from stranding a tab on "Saving…", which is what the
+ * earlier ?preview=1 round-trip did whenever the save was slow or failed:
+ *
+ * - The tab is opened inside the click, because only a user gesture may open
+ *   one, and we hold the reference and navigate it ourselves. Re-finding it
+ *   later with a second `window.open` is a pop-up with no gesture behind it,
+ *   and a blocked one leaves the placeholder up forever.
+ * - Every path out of the save writes an outcome somewhere the author is
+ *   looking: success navigates the tab, failure closes it and shows the normal
+ *   error notice, and a save that never answers says so rather than spinning.
  */
 const PREVIEW_WINDOW = "tnb-preview";
+
+/** A save with no answer by now is reported, not waited on indefinitely. */
+const SAVE_TIMEOUT_MS = 20000;
+
+function showInTab(tab: Window | null, message: string) {
+  if (!tab) return;
+  try {
+    tab.document.title = "Preview";
+    const p = tab.document.createElement("p");
+    p.textContent = message;
+    p.style.cssText = "font-family: sans-serif; padding: 2rem; line-height: 1.5;";
+    tab.document.body.replaceChildren(p);
+  } catch {
+    // Reused window mid-navigation; nothing to place the message on.
+  }
+}
 
 export default function SaveBar({
   saved,
   error,
   postId,
-  preview,
 }: {
   saved?: boolean;
   error?: string;
   postId?: string;
-  preview?: boolean;
 }) {
   const [dirty, setDirty] = useState(false);
+  const [previewError, setPreviewError] = useState<string | null>(null);
+  const [previewSaved, setPreviewSaved] = useState(false);
+  // Plain state rather than useTransition: a transition stays pending for as
+  // long as the server action is in flight, so a request that never answers
+  // would leave the button disabled with no way back.
+  const [pending, setPending] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
-  const previewPending = useRef(false);
+  // Re-takes the clean snapshot after a save that did not reload the page.
+  const rebaseline = useRef<() => void>(() => {});
   const router = useRouter();
 
   useEffect(() => {
@@ -66,6 +97,11 @@ export default function SaveBar({
       initial = serialize();
     }, 0);
 
+    rebaseline.current = () => {
+      initial = serialize();
+      setDirty(false);
+    };
+
     const observer = new MutationObserver(check);
     observer.observe(form, { childList: true, subtree: true });
     form.addEventListener("input", check);
@@ -78,42 +114,72 @@ export default function SaveBar({
     };
   }, []);
 
-  useEffect(() => {
-    if (!postId) return;
-    if (preview) {
-      previewPending.current = false;
-      const w = window.open(`/bricks/preview/${postId}`, PREVIEW_WINDOW);
-      w?.focus();
-      // Drop ?preview=1 so the next preview click re-triggers this effect.
-      router.replace(`/admin/posts/${postId}?saved=1`, { scroll: false });
-    } else if (error && previewPending.current) {
-      previewPending.current = false;
-      // The save failed: close the placeholder tab the click opened. If it is
-      // already gone, window.open without a user gesture returns null (popup
-      // blocked) and this is a no-op.
-      window.open("", PREVIEW_WINDOW)?.close();
-    }
-  }, [preview, error, postId, router]);
-
-  function handlePreviewClick(e: React.MouseEvent<HTMLButtonElement>) {
-    // Don't open a tab the save will never fill: if native validation is
-    // about to block the submit, let it surface and bail.
+  function handlePreview(e: React.MouseEvent<HTMLButtonElement>) {
     const form = e.currentTarget.form;
-    if (form && !form.checkValidity()) return;
-    previewPending.current = true;
-    const w = window.open("", PREVIEW_WINDOW);
-    if (w) {
+    if (!form || !postId) return;
+
+    // Same gate a Save click would hit, with the browser's own messages. It
+    // runs before anything opens, so an invalid form never leaves a tab behind.
+    if (!form.reportValidity()) return;
+
+    const data = new FormData(form);
+
+    const tab = window.open("", PREVIEW_WINDOW);
+    showInTab(tab, "Saving…");
+    setPreviewError(null);
+    setPreviewSaved(false);
+
+    setPending(true);
+
+    void (async () => {
+      let outcome: Awaited<ReturnType<typeof savePostForPreview>> | "timeout";
       try {
-        w.document.title = "Preview";
-        const msg = w.document.createElement("p");
-        msg.textContent = "Saving…";
-        msg.style.cssText = "font-family: sans-serif; padding: 2rem;";
-        w.document.body.replaceChildren(msg);
-      } catch {
-        // Reused window mid-navigation; the effect will still target it.
+        outcome = await Promise.race([
+          savePostForPreview(data),
+          new Promise<"timeout">((resolve) =>
+            setTimeout(() => resolve("timeout"), SAVE_TIMEOUT_MS),
+          ),
+        ]);
+      } catch (cause) {
+        outcome = {
+          ok: false,
+          error: cause instanceof Error ? cause.message : "The save request failed.",
+        };
       }
-    }
+      setPending(false);
+
+      if (outcome === "timeout") {
+        // The request may still land, so don't claim it failed outright.
+        showInTab(tab, "The save hasn’t answered yet. Close this tab and check the editor.");
+        setPreviewError(
+          `No answer from the save after ${SAVE_TIMEOUT_MS / 1000}s. It may still be in flight — reload the editor to see what was stored before trying again.`,
+        );
+        return;
+      }
+
+      if (!outcome.ok) {
+        tab?.close();
+        setPreviewError(outcome.error);
+        return;
+      }
+
+      setPreviewSaved(true);
+      rebaseline.current();
+      if (tab) {
+        tab.location.href = `/bricks/preview/${outcome.postId}`;
+        tab.focus();
+      } else {
+        setPreviewError(
+          "Saved, but the preview tab was blocked. Allow pop-ups for this site, then click Preview again.",
+        );
+      }
+      // Pick up what was actually stored (slug, computed fields, timestamps).
+      router.refresh();
+    })();
   }
+
+  const notice = previewError ?? error;
+  const showSaved = (previewSaved || saved) && !dirty && !notice;
 
   return (
     <div
@@ -121,7 +187,7 @@ export default function SaveBar({
       className="space-y-3 pt-4 border-t"
       style={{ borderColor: "var(--color-border)" }}
     >
-      {saved && !dirty && (
+      {showSaved && (
         <div
           className="rounded-lg px-4 py-3 text-sm"
           style={{
@@ -133,8 +199,9 @@ export default function SaveBar({
           Saved.
         </div>
       )}
-      {error && (
+      {notice && (
         <div
+          role="alert"
           className="rounded-lg px-4 py-3 text-sm"
           style={{
             backgroundColor: "var(--color-surface)",
@@ -142,14 +209,15 @@ export default function SaveBar({
             color: "var(--color-primary)",
           }}
         >
-          {error}
+          {notice}
         </div>
       )}
 
       <div className="flex items-center gap-3">
         <button
           type="submit"
-          className="px-5 py-2.5 rounded-lg font-medium text-sm transition-colors duration-200 hover:opacity-90 cursor-pointer"
+          disabled={pending}
+          className="px-5 py-2.5 rounded-lg font-medium text-sm transition-colors duration-200 hover:opacity-90 cursor-pointer disabled:cursor-default disabled:opacity-60"
           style={
             dirty
               ? {
@@ -168,18 +236,20 @@ export default function SaveBar({
         </button>
         {postId && (
           <button
-            type="submit"
-            name="intent"
-            value="preview"
-            onClick={handlePreviewClick}
-            className="px-5 py-2.5 rounded-lg font-medium text-sm transition-colors duration-200 hover:opacity-90 cursor-pointer"
+            // Not a submit: the save is dispatched here so its outcome can be
+            // awaited and acted on, rather than posted and hoped for.
+            type="button"
+            onClick={handlePreview}
+            disabled={pending}
+            aria-busy={pending}
+            className="px-5 py-2.5 rounded-lg font-medium text-sm transition-colors duration-200 hover:opacity-90 cursor-pointer disabled:cursor-default disabled:opacity-60"
             style={{
               backgroundColor: "var(--color-surface)",
               color: "var(--color-text-secondary)",
               border: "1px solid var(--color-border)",
             }}
           >
-            Preview
+            {pending ? "Saving…" : "Preview"}
           </button>
         )}
         <Link
