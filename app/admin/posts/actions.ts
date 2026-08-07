@@ -64,6 +64,19 @@ async function syncTags(
 type PostStatus = "draft" | "scheduled" | "published";
 
 /**
+ * `published_at` must arrive as an instant — an ISO string carrying `Z` or an
+ * offset. A bare `2026-08-06T14:00` would be read as the server's local time
+ * (UTC in production), silently turning an author's 2pm into someone else's,
+ * so the zone is resolved in the browser (see PublishedAtInput) and anything
+ * without one is refused rather than guessed at.
+ */
+function parseInstant(raw: string): Date | null {
+  if (!/(?:Z|[+-]\d{2}:?\d{2})$/i.test(raw)) return null;
+  const date = new Date(raw);
+  return isNaN(date.getTime()) ? null : date;
+}
+
+/**
  * Resolves `published_at` based on status:
  * - draft: always null (ignore submitted value)
  * - scheduled: required + must be in the future
@@ -81,10 +94,8 @@ function resolvePublishedAt(
     if (!publishedAtRaw) {
       return { ok: false, error: "Scheduled posts require a publish date." };
     }
-    const date = new Date(publishedAtRaw);
-    if (isNaN(date.getTime())) {
-      return { ok: false, error: "Invalid publish date." };
-    }
+    const date = parseInstant(publishedAtRaw);
+    if (!date) return { ok: false, error: "Invalid publish date." };
     if (date.getTime() <= Date.now()) {
       return {
         ok: false,
@@ -96,10 +107,8 @@ function resolvePublishedAt(
 
   // published
   if (!publishedAtRaw) return { ok: true, value: new Date().toISOString() };
-  const date = new Date(publishedAtRaw);
-  if (isNaN(date.getTime())) {
-    return { ok: false, error: "Invalid publish date." };
-  }
+  const date = parseInstant(publishedAtRaw);
+  if (!date) return { ok: false, error: "Invalid publish date." };
   return { ok: true, value: date.toISOString() };
 }
 

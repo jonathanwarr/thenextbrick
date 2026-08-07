@@ -86,8 +86,15 @@ export default function SaveBar({
     }
 
     let initial: string | null = null;
+    // Read the form after React commits, not during the event: what gets
+    // submitted can be a derived field (PublishedAtInput's hidden UTC value)
+    // that only updates on the re-render the event triggers.
+    let queued: ReturnType<typeof setTimeout> | undefined;
     const check = () => {
-      if (initial !== null) setDirty(serialize() !== initial);
+      clearTimeout(queued);
+      queued = setTimeout(() => {
+        if (initial !== null) setDirty(serialize() !== initial);
+      }, 0);
     };
 
     // Snapshot on a timeout, not immediately: sibling client components
@@ -108,6 +115,7 @@ export default function SaveBar({
     form.addEventListener("change", check);
     return () => {
       clearTimeout(timer);
+      clearTimeout(queued);
       observer.disconnect();
       form.removeEventListener("input", check);
       form.removeEventListener("change", check);
