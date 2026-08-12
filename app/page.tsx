@@ -72,7 +72,7 @@ export default async function HomePage() {
               animationDelay: "0ms",
             }}
           >
-            <span className="font-semibold" style={{ color: "var(--color-primary)" }}>AI Fluency</span>{" "}
+            <span className="font-semibold" style={{ color: "var(--color-primary)" }}>Claude</span>{" "}
             <span className="font-normal">for Customer Success</span>
           </h1>
 
@@ -86,7 +86,7 @@ export default async function HomePage() {
               animationDelay: "160ms",
             }}
           >
-            Learn <span style={{ color: "var(--color-primary)" }}>Claude</span>. One Brick at a Time
+            AI Fluency. One Brick at a Time.
           </p>
 
           <div className="hidden max-md:block max-md:flex-[115]" />
