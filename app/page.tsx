@@ -73,7 +73,7 @@ export default async function HomePage() {
             }}
           >
             <span className="font-semibold" style={{ color: "var(--color-primary)" }}>Claude</span>{" "}
-            <span className="font-normal">for Customer Onboarding &amp; Success</span>
+            <span className="font-normal">for Customer<br />Onboarding &amp; Success</span>
           </h1>
 
           {/* Subtitle */}
