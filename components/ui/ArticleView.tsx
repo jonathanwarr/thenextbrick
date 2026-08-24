@@ -1,5 +1,5 @@
 import Link from "next/link";
-import ReactMarkdown from "react-markdown";
+import ReactMarkdown, { type Components } from "react-markdown";
 import remarkGfm from "remark-gfm";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
@@ -99,7 +99,9 @@ export default function ArticleView({
           {screenshotPlaceholders ? (
             <BodyWithPlaceholders bodyMd={post.bodyMd} />
           ) : (
-            <ReactMarkdown remarkPlugins={[remarkGfm]}>{post.bodyMd}</ReactMarkdown>
+            <ReactMarkdown remarkPlugins={[remarkGfm]} components={markdownComponents}>
+              {post.bodyMd}
+            </ReactMarkdown>
           )}
         </article>
 
@@ -133,6 +135,17 @@ export default function ArticleView({
   );
 }
 
+// Article body links point off-page (sources, references, other sites) far
+// more often than not, so they open in a new tab rather than navigating the
+// reader away from the article.
+const markdownComponents: Components = {
+  a: ({ href, children, ...props }) => (
+    <a href={href} target="_blank" rel="noopener noreferrer" {...props}>
+      {children}
+    </a>
+  ),
+};
+
 // Matches a whole line of the exact form `[SCREENSHOT: description]`. The
 // capture group makes String.split interleave descriptions between the
 // markdown segments (odd indices).
@@ -164,7 +177,7 @@ function BodyWithPlaceholders({ bodyMd }: { bodyMd: string }) {
             </span>
           </div>
         ) : part.trim() ? (
-          <ReactMarkdown key={i} remarkPlugins={[remarkGfm]}>
+          <ReactMarkdown key={i} remarkPlugins={[remarkGfm]} components={markdownComponents}>
             {part}
           </ReactMarkdown>
         ) : null,
